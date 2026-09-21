@@ -99,3 +99,8 @@ not imply module/account readiness, and the report never reads service run files
 provider configuration or tokens.
 
 Dev.21: Pins shared dev.21 network/search/state maintenance without forking the core or claiming native runtime acceptance.
+
+## dev.22 increment
+
+Pins the same dev.22 receiver-coordination core; native Termux/Bionic execution remains unverified.
+No product or physical acceptance gate closes.

@@ -55,3 +55,10 @@ Pins shared dev.21 network/search/state maintenance without forking the core or 
 No physical, account or product milestone closes.
 
 Verification: installer/lifecycle shell syntax passes; the pinned core passes host Go and contract checks. Termux/Bionic execution remains unverified.
+
+## dev.22 increment
+
+Pins the same dev.22 receiver-coordination core; native Termux/Bionic execution remains unverified.
+No product or physical acceptance gate closes.
+
+Verification: native installer/lifecycle shell syntax passes; the shared core passes host checks. Termux/Bionic execution is unverified.
