@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "repository": "zombiebox-gateway-edge",
+  "productRegistry": "workspace:docs/milestones.json",
+  "notes": ["Local component scope; product exit gates remain open. No hosted milestones exist."],
+  "milestones": [
+    {
+      "id": "M10",
+      "title": "Gateway Edge",
+      "status": "in_progress",
+      "completedAt": null,
+      "remoteId": null
+    },
+    {
+      "id": "M11",
+      "title": "Public beta",
+      "status": "planned",
+      "completedAt": null,
+      "remoteId": null
+    }
+  ]
+}

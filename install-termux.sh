@@ -4,7 +4,8 @@ if [[ ${PREFIX:-} != /data/data/com.termux/files/usr ]]; then
     echo 'Run this script inside Termux on Android, not on Fedora.' >&2
     exit 1
 fi
-repo=$(cd "$(dirname "$0")/.." && pwd)
+component=$(cd "$(dirname "$0")" && pwd)
+repo=$(python3 "$component/scripts/dependencies.py" check gateway-core)
 with_cast=false
 with_youtube=false
 with_probes=false

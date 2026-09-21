@@ -5,7 +5,8 @@ set -euo pipefail
     echo 'Run inside Termux on Android.' >&2
     exit 1
 }
-repo=$(cd "$(dirname "$0")/.." && pwd)
+component=$(cd "$(dirname "$0")" && pwd)
+repo=$(python3 "$component/scripts/dependencies.py" check gateway-core)
 runtime="$HOME/.zombie"
 [[ -x "$runtime/bin/zombied" ]] || {
     echo 'Run install-termux.sh first.' >&2

@@ -6,7 +6,8 @@ set -euo pipefail
 }
 for tool in node npm python3; do command -v "$tool" >/dev/null; done
 node -e 'const [major,minor,patch]=process.versions.node.split(".").map(Number);if(major!==22||minor<22||(minor===22&&patch<2)){process.stderr.write("This lock requires native Node 22.22.2 or a newer 22.x patch.\n");process.exit(1)}'
-repo=$(cd "$(dirname "$0")/.." && pwd)
+component=$(cd "$(dirname "$0")" && pwd)
+repo=$(python3 "$component/scripts/dependencies.py" check gateway-core)
 runtime="$HOME/.zombie"
 [[ -x "$runtime/bin/zombied" ]] || {
     echo 'Install the shared gateway first.' >&2

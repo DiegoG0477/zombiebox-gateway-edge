@@ -1,50 +1,39 @@
-# Gateway Edge
+# zombiebox-gateway-edge
 
-One shared Go core, built natively in Termux/Bionic. Android 7+ remains the target subject to current native package availability; Fedora builds do not validate that runtime.
+Native Android/Termux deployment of the same Go core.
 
-```sh
-pkg install git golang clang termux-services ffmpeg
-# Restore third_party/sources using make references on the development host before transferring,
-# or install Python and run scripts/sync-upstreams.py on the Edge host.
-bash gateway-edge/install-termux.sh --with-cast --with-youtube
-```
+This is an independent repository in the Zombie Box workspace. Remotes and hosted
+releases are not configured yet; local commits/tags and dependency pins are real.
 
-The optional YouTube worker needs native Node >=22 and npm. The gateway requires Go >=1.25; the pinned MediaMTX 1.21.1 source requires Go >=1.26. `GOTOOLCHAIN=local` prevents an incompatible Linux toolchain download in Termux. MediaMTX is compiled from the locked source in a disposable copy, with [our Android build-constraint patch](../wrappers/mediamtx/android.patch). Raspberry Pi camera integration and the standalone HLS JavaScript player are omitted. Neither is used by Zombie. The reference clone is unchanged.
-
-The installer creates stopped runit services. After starting Termux's service supervisor:
+Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
 ```sh
-sv-enable zombied
-sv-enable zombie-mediamtx
-sv-enable zombie-youtube
+make deps-check
+make check      # shell syntax; can run on Fedora
+# On the actual Android Termux host:
+pkg install python git golang clang termux-services ffmpeg
+bash install-termux.sh --with-probes --with-cast --with-youtube
+bash install-services.sh spotify threadfin
+bash install-youtube-receiver.sh
 ```
 
-Private files live under `~/.zombie/`. Edit `config/runtime.env` for the intended LAN address in `ZOMBIE_LISTEN` and `ZOMBIE_RTSP_LISTEN`; defaults are loopback. HLS/control endpoints remain loopback. The generated relay key is preserved. Gateway and MediaMTX share it; do not paste it into the TV client. An optional persistent pairing code can be added as `ZOMBIE_PAIRING_CODE` to this private file; otherwise the gateway prints an ephemeral operator code at startup.
+Optional modules require the native development libraries documented by their
+core wrapper README. Restore core's locked references using `make -C ../gateway-core
+references` before source builds. `ZOMBIE_CORE_DIR` selects a different checkout;
+`make deps` restores `.deps/gateway-core` once a remote is configured. The installer
+creates stopped runit services under Termux; enable only the modules you configure.
 
-`config/youtube.json` holds worker credentials. The installer creates a disabled matching entry in `config/providers.json` if absent. Enable it there after enabling the worker; existing provider configuration is preserved. Provider account credentials remain server-side. Native FFmpeg is used only for local media at this checkpoint.
+No Docker or downloaded Linux runtime binary is used. Core needs Go >=1.25;
+pinned MediaMTX needs native Go >=1.26, and the receiver needs Node22.22.2+ within
+22.x. Physical execution, boot/wake-lock work, UxPlay feasibility and thermal gates
+remain open. Do not label a Fedora compile as Android/Bionic compatibility.
 
-No Docker or Linux runtime binary is installed. SQLite uses native CGO/Bionic `go-sqlite3`; Linux uses the pure-Go driver with the same domain/SQL code. Native service restart, Android ABI compatibility, sustained resource use and thermal behavior still need physical validation. Boot/wake locks and UxPlay feasibility remain open. Native Spotify/Threadfin package installers now exist; they still require physical validation. Local Rebrowser is unsupported on Edge V1.
+## Development rules
 
-The pinned MediaMTX Android dependency [anet](https://github.com/wlynxg/anet/tree/v0.0.5) requires `-checklinkname=0` on Go 1.23+. Only the MediaMTX build uses this upstream-documented flag. An Android ARM64 binary compiled successfully with Go 1.26.0 and the local patch on Fedora; that is a cross-compilation check, not Termux execution. The installer records installed tool versions in `~/.zombie/build-info.txt`. Revalidate before changing Go/anet versions.
-
-Additional packages (run inside Termux):
-
-```sh
-bash gateway-edge/install-services.sh spotify threadfin
-```
-
-Install native Python, pkg-config, libogg, libvorbis, libflac and mpg123 decode
-libraries before the Spotify build. The installer checks native metadata and
-fails instead of downloading Linux binaries. Services start disabled; existing
-provider credentials and direct IPTV lists are preserved. See each wrapper README.
-
-YouTube TV Code/DIAL has a separate optional native installer:
-
-```sh
-bash gateway-edge/install-youtube-receiver.sh
-```
-
-It requires the shared gateway and native Node/npm/Python. It installs a stopped
-`zombie-youtube-receiver` runit service and a disabled provider entry. Read the
-[receiver workflow](../wrappers/youtube-receiver/README.md) before enabling it;
-Termux multicast/discovery and native runtime are not yet verified.
+Run `make format` and `make format-check`. Formatters are pinned and downloaded
+on first use. See [AGENTS.md](AGENTS.md), [history provenance](docs/history.md),
+[component work](docs/PLANNING.md) and [local milestone registry](docs/milestones.json).
+The central workspace owns product-wide ADRs, the original specification, the UI
+reference, M0–M11 exit gates and the complete development/validation gap audit.
+Physical devices over USB/ADB are the default; automated checks do not establish
+legacy runtime or end-to-end account/media compatibility.
