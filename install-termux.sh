@@ -38,7 +38,8 @@ if $with_youtube; then
 fi
 umask 077
 runtime="$HOME/.zombie"
-mkdir -p "$runtime"/{media,bin,config,state,cache,logs,probes}
+mkdir -p "$runtime"/{media,bin,config,state,cache,logs,probes,licenses/zombiebox}
+cp "$repo/LICENSE" "$repo/NOTICE" "$runtime/licenses/zombiebox/"
 if $with_probes; then
     command -v python3 >/dev/null || {
         echo "Install Python: pkg install python" >&2

@@ -79,3 +79,7 @@ builds the locked UxPlay source without editing the reference clone, and install
 A/V negotiation, reboot or thermal acceptance has yet been recorded. Rebrowser
 remains a remote Full feature. Disabling the owned wake lock releases Termux's
 process-level wake lock; coordinate that with other Termux workloads.
+
+## License
+
+First-party code: [GPL-3.0-only](LICENSE). See [NOTICE](NOTICE) for third-party scope.

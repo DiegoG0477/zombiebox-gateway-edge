@@ -38,3 +38,9 @@ The four requested block-1 changes are implemented; physical acceptance and broa
 
 Pins shared core; native service lifecycle, boot/wake/doctor/update/uninstall and an explicitly experimental UxPlay source installer. Bionic execution remains unverified.
 Product exit gates and physical/account acceptance remain open.
+
+## dev.17 increment
+
+Consumes dev.17 shared core and installs its first-party license/notice; no new Bionic runtime validation.
+
+No product milestone or physical gate is closed.
