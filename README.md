@@ -1,19 +1,28 @@
 # Gateway Edge
 
-Uses the same `../gateway/` core inside Termux; Android 7+ is the target. No Docker and no assumption that linux/arm64 binaries run on Android.
-
-Inside Termux:
+One shared Go core, built natively in Termux/Bionic. Android 7+ remains the target subject to current native package availability; Fedora builds do not validate that runtime.
 
 ```sh
-pkg install git golang clang termux-services
-# Clone this monorepo once a remote exists, then enter it.
-bash gateway-edge/install-termux.sh
-# Restart the shell if required by termux-services.
-sv-enable zombied
+pkg install git golang clang termux-services ffmpeg
+# Restore third_party/sources using make references on the development host before transferring,
+# or install Python and run scripts/sync-upstreams.py on the Edge host.
+bash gateway-edge/install-termux.sh --with-cast --with-youtube
 ```
 
-The installer builds with installed native Go (`GOTOOLCHAIN=local` prevents an incompatible Linux toolchain download). Go >=1.25 is required; verify package availability for the actual Android version. It creates a stopped service with loopback binding. Adjust its run file for an explicit LAN address when needed; measure thermal/battery behavior. Termux:Boot and wake locks are not configured automatically.
+The optional YouTube worker needs native Node >=22 and npm. The gateway requires Go >=1.25; the pinned MediaMTX 1.21.1 source requires Go >=1.26. `GOTOOLCHAIN=local` prevents an incompatible Linux toolchain download in Termux. MediaMTX is compiled from the locked source in a disposable copy, with [our Android build-constraint patch](../wrappers/mediamtx/android.patch). Raspberry Pi camera integration and the standalone HLS JavaScript player are omitted. Neither is used by Zombie. The reference clone is unchanged.
 
-Fedora does not validate this runtime. Local Rebrowser is unsupported in Edge V1. FFmpeg/MediaMTX and other workers follow after Bionic package/binary validation.
+The installer creates stopped runit services. After starting Termux's service supervisor:
 
-SQLite uses the Android-selected `mattn/go-sqlite3` driver and native CGO/Bionic compilation; Linux uses the pure-Go driver. Domain/SQL code is shared. The installer sets explicit private database/config/media paths and creates an empty provider file without overwriting an existing one. Configuration follows [services and credentials](../docs/development/services-and-credentials.md). Neither driver selection nor Fedora CGO tests validate the actual Termux runtime.
+```sh
+sv-enable zombied
+sv-enable zombie-mediamtx
+sv-enable zombie-youtube
+```
+
+Private files live under `~/.zombie/`. Edit `config/runtime.env` for the intended LAN address in `ZOMBIE_LISTEN` and `ZOMBIE_RTSP_LISTEN`; defaults are loopback. HLS/control endpoints remain loopback. The generated relay key is preserved. Gateway and MediaMTX share it; do not paste it into the TV client. An optional persistent pairing code can be added as `ZOMBIE_PAIRING_CODE` to this private file; otherwise the gateway prints an ephemeral operator code at startup.
+
+`config/youtube.json` holds worker credentials. The installer creates a disabled matching entry in `config/providers.json` if absent. Enable it there after enabling the worker; existing provider configuration is preserved. Provider account credentials remain server-side. Native FFmpeg is used only for local media at this checkpoint.
+
+No Docker or Linux runtime binary is installed. SQLite uses native CGO/Bionic `go-sqlite3`; Linux uses the pure-Go driver with the same domain/SQL code. Native service restart, Android ABI compatibility, sustained resource use and thermal behavior still need physical validation. Boot/wake locks, Spotify, UxPlay and Threadfin feasibility remain open. Local Rebrowser is unsupported on Edge V1.
+
+The pinned MediaMTX Android dependency [anet](https://github.com/wlynxg/anet/tree/v0.0.5) requires `-checklinkname=0` on Go 1.23+. Only the MediaMTX build uses this upstream-documented flag. An Android ARM64 binary compiled successfully with Go 1.26.0 and the local patch on Fedora; that is a cross-compilation check, not Termux execution. The installer records installed tool versions in `~/.zombie/build-info.txt`. Revalidate before changing Go/anet versions.
