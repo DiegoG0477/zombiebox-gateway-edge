@@ -47,3 +47,7 @@ Dev.11 consumes the same hierarchical browse, progressive remote adapter and
 adaptive YouTube resolver as Full. Its native FFmpeg must support the restricted
 HTTP/MP4/Matroska demuxers, H.264/AAC and fragmented MP4 output. The shared one-job
 conversion bound remains in effect. Full container checks do not verify Termux.
+
+Dev.12 pins the shared foreground media-receiver and Cast-budget core. No new
+platform binary or native UxPlay support is implied. Native operation, boot/wake
+lifecycle and the Android module support matrix remain separate work.

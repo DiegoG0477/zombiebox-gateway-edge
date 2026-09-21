@@ -19,3 +19,7 @@ issues/milestones can be attached to the shared GitHub Project once remotes exis
 
 Pins the same remote/browse core and adaptive YouTube worker. Native Termux/Bionic validation and operation lifecycle remain open.
 No product milestone or physical/account gate is completed by this checkpoint.
+
+## dev.12 increment
+
+Pins the shared reception/Cast-budget implementation. Bionic operation and native UxPlay remain unverified/unimplemented respectively.
