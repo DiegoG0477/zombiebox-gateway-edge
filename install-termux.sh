@@ -4,9 +4,9 @@ if [[ ${PREFIX:-} != /data/data/com.termux/files/usr ]]; then
   echo 'Run this script inside Termux on Android, not on Fedora.' >&2; exit 1
 fi
 repo=$(cd "$(dirname "$0")/.." && pwd)
-with_cast=false; with_youtube=false
+with_cast=false; with_youtube=false; with_probes=false
 for argument in "$@"; do
-  case "$argument" in --with-cast) with_cast=true;; --with-youtube) with_youtube=true;; *) echo "Unknown option: $argument" >&2; exit 1;; esac
+  case "$argument" in --with-probes) with_probes=true;; --with-cast) with_cast=true;; --with-youtube) with_youtube=true;; *) echo "Unknown option: $argument" >&2; exit 1;; esac
 done
 for program in go clang sv ffmpeg ffprobe; do
   command -v "$program" >/dev/null || { echo 'Install: pkg install golang clang termux-services ffmpeg' >&2; exit 1; }
@@ -21,7 +21,11 @@ if $with_youtube; then
 fi
 umask 077
 runtime="$HOME/.zombie"
-mkdir -p "$runtime"/{media,bin,config,state,cache,logs}
+mkdir -p "$runtime"/{media,bin,config,state,cache,logs,probes}
+if $with_probes; then
+  command -v python3 >/dev/null || { echo "Install Python: pkg install python" >&2; exit 1; }
+  python3 "$repo/scripts/generate-probes.py" --output "$runtime/probes"
+fi
 chmod 700 "$runtime" "$runtime/config" "$runtime/state"
 (cd "$repo/gateway" && CGO_ENABLED=1 GOTOOLCHAIN=local GOMAXPROCS=2 go build -p 2 -trimpath -o "$runtime/bin/zombied" ./cmd/zombied)
 [[ -f "$runtime/config/providers.json" ]] || printf '{}\n' > "$runtime/config/providers.json"
@@ -84,7 +88,7 @@ set -a
 . "$HOME/.zombie/config/runtime.env"
 set +a
 export GOMEMLIMIT=192MiB GOMAXPROCS=2
-set -- -listen "$ZOMBIE_LISTEN" -state "$HOME/.zombie/state/gateway.db" -media-dir "$HOME/.zombie/media" -config "$HOME/.zombie/config/providers.json" -media-tools
+set -- -probe-dir "$HOME/.zombie/probes" -listen "$ZOMBIE_LISTEN" -state "$HOME/.zombie/state/gateway.db" -media-dir "$HOME/.zombie/media" -config "$HOME/.zombie/config/providers.json" -media-tools
 if [ -f "$HOME/.zombie/config/cast.enabled" ]; then
   set -- "$@" -relay-url http://127.0.0.1:8888 -relay-control-url http://127.0.0.1:9997
 fi
