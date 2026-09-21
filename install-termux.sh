@@ -83,7 +83,7 @@ RUN
 fi
 if $with_youtube; then
     mkdir -p "$runtime/youtube"
-    cp "$repo/wrappers/youtube/"{package.json,package-lock.json,server.mjs,worker.mjs,interpreter.mjs} "$runtime/youtube/"
+    cp "$repo/wrappers/youtube/"{package.json,package-lock.json,server.mjs,worker.mjs,interpreter.mjs,formats.mjs,browse.mjs} "$runtime/youtube/"
     (cd "$runtime/youtube" && npm ci --ignore-scripts --no-audit --no-fund)
     if [[ ! -f "$runtime/config/youtube.json" ]]; then
         node -e 'const fs=require("node:fs"),crypto=require("node:crypto");fs.writeFileSync(process.argv[1],JSON.stringify({token:crypto.randomBytes(32).toString("hex"),cookie:"",visitorData:"",poToken:""})+"\n",{mode:0o600,flag:"wx"})' "$runtime/config/youtube.json"

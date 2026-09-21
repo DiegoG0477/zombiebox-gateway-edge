@@ -9,7 +9,8 @@
     "Dev.12: Pins the shared reception/Cast-budget implementation. Bionic operation and native UxPlay remain unverified/unimplemented respectively.",
     "Dev.13: Pins the same retry/live-TS implementation; no native lifecycle or Bionic evidence added. Product exit gates remain open.",
     "Dev.14: Pins the shared HLS/DASH adapter; native FFmpeg and Termux/Bionic execution remain unverified. Product exit gates remain open.",
-    "Dev.15: Pins the manifest case/encoding guards following dev.14; existing tags remain immutable."
+    "Dev.15: Pins the manifest case/encoding guards following dev.14; existing tags remain immutable.",
+    "Dev.16: Pins shared core; native service lifecycle, boot/wake/doctor/update/uninstall and an explicitly experimental UxPlay source installer. Bionic execution remains unverified. No product milestone closes."
   ],
   "milestones": [
     {
@@ -27,5 +28,5 @@
       "remoteId": null
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.13"
+  "developmentCheckpoint": "v0.1.0-dev.16"
 }

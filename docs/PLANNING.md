@@ -33,3 +33,8 @@ No product milestone or physical/account gate closes with this checkpoint.
 
 Pins the shared HLS/DASH adapter; native FFmpeg and Termux/Bionic execution remain unverified.
 The four requested block-1 changes are implemented; physical acceptance and broader product gates remain open.
+
+## dev.16 increment
+
+Pins shared core; native service lifecycle, boot/wake/doctor/update/uninstall and an explicitly experimental UxPlay source installer. Bionic execution remains unverified.
+Product exit gates and physical/account acceptance remain open.

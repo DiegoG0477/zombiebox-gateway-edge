@@ -58,3 +58,24 @@ Dev.13: Pins the same retry/live-TS implementation; no native lifecycle or Bioni
 
 Pins the shared HLS/DASH adapter; native FFmpeg and Termux/Bionic execution remain unverified.
 The four requested block-1 changes are implemented; physical acceptance and broader product gates remain open.
+
+Dev.16: Pins shared core; native service lifecycle, boot/wake/doctor/update/uninstall and an explicitly experimental UxPlay source installer. Bionic execution remains unverified.
+
+```sh
+bash edge.sh doctor
+bash edge.sh start zombied zombie-mediamtx
+bash edge.sh boot-enable zombied zombie-mediamtx  # requires Termux:Boot opened once
+bash edge.sh status
+bash edge.sh stop
+bash edge.sh update --with-probes --with-cast --with-youtube
+bash edge.sh boot-disable
+bash edge.sh uninstall  # removes services; preserves private data/media/config
+```
+
+`install-airplay-experimental.sh` is an opt-in native source build experiment.
+It checks native OpenSSL/libplist/GStreamer development libraries and RTP plugins,
+builds the locked UxPlay source without editing the reference clone, and installs
+`zombie-airplay` stopped with private PIN/configuration. No Termux compile, mDNS,
+A/V negotiation, reboot or thermal acceptance has yet been recorded. Rebrowser
+remains a remote Full feature. Disabling the owned wake lock releases Termux's
+process-level wake lock; coordinate that with other Termux workloads.

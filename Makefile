@@ -11,6 +11,6 @@ deps:
 deps-check:
 	python3 scripts/dependencies.py check gateway-core
 check:
-	for script in install-termux.sh install-services.sh install-youtube-receiver.sh; do bash -n "$$script"; done
+	for script in install-termux.sh install-services.sh install-youtube-receiver.sh install-airplay-experimental.sh edge.sh; do bash -n "$$script"; done
 install: deps-check
 	bash install-termux.sh
