@@ -23,6 +23,17 @@ Private files live under `~/.zombie/`. Edit `config/runtime.env` for the intende
 
 `config/youtube.json` holds worker credentials. The installer creates a disabled matching entry in `config/providers.json` if absent. Enable it there after enabling the worker; existing provider configuration is preserved. Provider account credentials remain server-side. Native FFmpeg is used only for local media at this checkpoint.
 
-No Docker or Linux runtime binary is installed. SQLite uses native CGO/Bionic `go-sqlite3`; Linux uses the pure-Go driver with the same domain/SQL code. Native service restart, Android ABI compatibility, sustained resource use and thermal behavior still need physical validation. Boot/wake locks, Spotify, UxPlay and Threadfin feasibility remain open. Local Rebrowser is unsupported on Edge V1.
+No Docker or Linux runtime binary is installed. SQLite uses native CGO/Bionic `go-sqlite3`; Linux uses the pure-Go driver with the same domain/SQL code. Native service restart, Android ABI compatibility, sustained resource use and thermal behavior still need physical validation. Boot/wake locks and UxPlay feasibility remain open. Native Spotify/Threadfin package installers now exist; they still require physical validation. Local Rebrowser is unsupported on Edge V1.
 
 The pinned MediaMTX Android dependency [anet](https://github.com/wlynxg/anet/tree/v0.0.5) requires `-checklinkname=0` on Go 1.23+. Only the MediaMTX build uses this upstream-documented flag. An Android ARM64 binary compiled successfully with Go 1.26.0 and the local patch on Fedora; that is a cross-compilation check, not Termux execution. The installer records installed tool versions in `~/.zombie/build-info.txt`. Revalidate before changing Go/anet versions.
+
+Additional packages (run inside Termux):
+
+```sh
+bash gateway-edge/install-services.sh spotify threadfin
+```
+
+Install native Python, pkg-config, libogg, libvorbis, libflac and mpg123 decode
+libraries before the Spotify build. The installer checks native metadata and
+fails instead of downloading Linux binaries. Services start disabled; existing
+provider credentials and direct IPTV lists are preserved. See each wrapper README.
