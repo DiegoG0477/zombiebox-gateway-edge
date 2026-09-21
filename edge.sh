@@ -57,6 +57,7 @@ case ${1:-status} in
         done
         ;;
     doctor)
+        python3 "$component/scripts/doctor.py"
         failed=0
         for program in sv go clang ffmpeg ffprobe termux-wake-lock termux-wake-unlock; do
             if command -v "$program" >/dev/null; then printf 'Available: %s\n' "$program"; else

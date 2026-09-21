@@ -89,3 +89,11 @@ The shared cache defaults to 64 MiB/24 hours; `-artwork-cache-mb 0` disables dis
 persistence. Source URLs/credentials/original images are not stored in cache files.
 
 Dev.19: Pins the same dev.19 core with no Linux/Android code fork; native Bionic validation remains pending.
+
+Dev.20: Pins shared dev.20 core and adds bounded version/resource/installation diagnostics without reading private service configuration.
+
+`edge.sh doctor` now includes a JSON resource/tool/installation report. The
+standalone `scripts/doctor.py` is Termux-only at its CLI boundary; host fixtures
+exercise report generation without pretending to run Android. Tool presence does
+not imply module/account readiness, and the report never reads service run files,
+provider configuration or tokens.
