@@ -42,3 +42,8 @@ Dev.10 consumes the same local audio-track/text-subtitle core as Full. The insta
 already enables `-media-tools`; its native Termux FFmpeg supplies the implementation.
 Host tests do not establish Bionic decoder/subtitle compatibility. No parallel Go
 implementation or Linux runtime binary is introduced.
+
+Dev.11 consumes the same hierarchical browse, progressive remote adapter and
+adaptive YouTube resolver as Full. Its native FFmpeg must support the restricted
+HTTP/MP4/Matroska demuxers, H.264/AAC and fragmented MP4 output. The shared one-job
+conversion bound remains in effect. Full container checks do not verify Termux.
