@@ -59,7 +59,9 @@ case ${1:-status} in
     doctor)
         python3 "$component/scripts/doctor.py"
         failed=0
-        for program in sv go clang ffmpeg ffprobe termux-wake-lock termux-wake-unlock; do
+        programs=(sv ffmpeg ffprobe termux-wake-lock termux-wake-unlock)
+        [[ -f $component/release.json ]] || programs+=(go clang)
+        for program in "${programs[@]}"; do
             if command -v "$program" >/dev/null; then printf 'Available: %s\n' "$program"; else
                 printf 'Missing: %s\n' "$program"
                 failed=1
@@ -95,6 +97,10 @@ case ${1:-status} in
     boot-disable) rm -f "$HOME/.termux/boot/zombiebox" ;;
     update)
         shift
+        if [[ -f $component/release.json ]]; then
+            # The binary installer validates the replacement before stopping core.
+            exec bash "$component/install.sh" "$@"
+        fi
         # Installer verifies the exact clean core pin before stopping runtime.
         python3 "$component/scripts/dependencies.py" check gateway-core >/dev/null
         stop_all

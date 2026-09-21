@@ -57,7 +57,9 @@ def report(runtime, prefix):
         "installedServices": installed,
         "gatewayInstalled": (runtime / "bin/zombied").is_file(),
         "support": {
-            "core": "native-build-required",
+            "core": "android-prebuilt"
+            if (runtime / "current/release.json").is_file()
+            else "native-build-required",
             "airplay": "experimental-native-build",
             "rebrowser": "remote-full-only",
         },

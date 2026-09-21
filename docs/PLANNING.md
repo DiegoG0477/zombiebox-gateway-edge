@@ -75,3 +75,7 @@ Consumes the same companion core and installs its QR encoder license. This adds 
 Full visual/capture policy, extended Remote, HEVC/4K and other product gates remain open; physical acceptance stays deferred.
 
 Verification: Shell syntax and the exact core dependency pin pass on Fedora. No Termux/Bionic runtime claim is made.
+
+## dev.25 increment
+
+Verified Android binary bootstrap, ABI/API checks, preserved config/SQLite, lifecycle launcher and NDK/cgo candidate build workflow. Actual Android cross-build/runtime and optional prebuilt modules remain pending.

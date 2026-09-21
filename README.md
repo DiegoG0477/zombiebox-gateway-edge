@@ -7,6 +7,70 @@ releases are not configured yet; local commits/tags and dependency pins are real
 
 Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
+## Installation
+
+### Prebuilt Android bundle (first build/publication pending)
+
+Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
+userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
+No Docker, root, Go or C compiler is required by the binary installer. It installs
+Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
+
+Once release assets exist, a downloaded installer accepts an exact release:
+
+```sh
+bash install.sh --repository OWNER/ACTUAL_EDGE_REPO --version vX.Y.Z
+```
+
+A future README can expose the same operation as a version-pinned one-liner:
+
+```sh
+# Template only: replace with the actual published repository and release.
+curl -fsSL https://raw.githubusercontent.com/OWNER/ACTUAL_EDGE_REPO/vX.Y.Z/install.sh | bash -s -- --repository OWNER/ACTUAL_EDGE_REPO --version vX.Y.Z
+```
+
+There is no live download URL yet. For a locally transferred build, supply its
+independently checked SHA256:
+
+```sh
+bash install.sh --bundle /path/zombiebox-gateway-android-arm64.tar.gz --sha256 SHA256_FROM_BUILD
+```
+
+The installer verifies the archive checksum, bounded safe extraction, individual
+file hashes, ABI/API and Android PIE executable before stopping an existing core.
+It preserves private configuration/SQLite/media, installs a versioned directory and
+switches the launcher. Old directories remain available for operator recovery;
+this is not an automatic database rollback. It starts the gateway with UDP8098 LAN
+discovery. Dependencies and optional module installation remain visible; package
+availability and actual Bionic behavior require Android validation.
+
+```sh
+zombiebox                 # start core; default after installation
+zombiebox status
+zombiebox doctor
+zombiebox stop
+zombiebox boot-enable     # optional Termux:Boot hook
+zombiebox boot-disable
+zombiebox update --repository OWNER/ACTUAL_EDGE_REPO --version vX.Y.Z
+zombiebox uninstall       # removes services, retains private data
+```
+
+Install **and open Termux:Boot once** for the optional boot hook. Exempt Termux from
+battery optimization in Android settings. Startup acquires a wake lock; stopping
+releases the lock owned by this installation. A wake lock cannot guarantee survival
+against OEM process killing. Termux:Boot starts at boot, not whenever a charger is
+connected. See [Termux:Boot's instructions](https://github.com/termux/termux-boot/blob/master/README.md).
+
+This initial bundle contains core, SQLite and synthetic probes; FFmpeg comes from
+Termux. MediaMTX, YouTube, Spotify and experimental AirPlay still use the optional
+native source installers below. Prebuilt optional modules remain a distribution
+work item; they are not silently installed or claimed ready.
+
+### Available now: native source installation
+
+The commands below are the existing developer path and require Go/Clang on the
+phone. They do not establish Android runtime acceptance by themselves.
+
 ```sh
 make deps-check
 make check      # shell syntax; can run on Fedora
@@ -124,3 +188,7 @@ No product or physical acceptance gate closes.
 
 Consumes the same companion core and installs its QR encoder license. This adds no Linux binary, Docker requirement or native Android execution evidence.
 Full visual/capture policy, extended Remote, HEVC/4K and other product gates remain open; physical acceptance stays deferred.
+
+## dev.25 increment
+
+Verified Android binary bootstrap, ABI/API checks, preserved config/SQLite, lifecycle launcher and NDK/cgo candidate build workflow. Actual Android cross-build/runtime and optional prebuilt modules remain pending.
