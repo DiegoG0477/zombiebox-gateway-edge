@@ -51,3 +51,5 @@ conversion bound remains in effect. Full container checks do not verify Termux.
 Dev.12 pins the shared foreground media-receiver and Cast-budget core. No new
 platform binary or native UxPlay support is implied. Native operation, boot/wake
 lifecycle and the Android module support matrix remain separate work.
+
+Dev.13: Pins the same retry/live-TS implementation; no native lifecycle or Bionic evidence added.

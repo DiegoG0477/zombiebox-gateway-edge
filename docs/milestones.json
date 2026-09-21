@@ -6,7 +6,8 @@
     "Local component scope; product exit gates remain open. No hosted milestones exist.",
     "Dev.10: shared local media tracks/text subtitles and client Home refinement. Cast consumes the protocol transport update. Product exit gates remain open.",
     "Dev.11: Pins the same remote/browse core and adaptive YouTube worker. Native Termux/Bionic validation and operation lifecycle remain open. Product exit gates remain open.",
-    "Dev.12: Pins the shared reception/Cast-budget implementation. Bionic operation and native UxPlay remain unverified/unimplemented respectively."
+    "Dev.12: Pins the shared reception/Cast-budget implementation. Bionic operation and native UxPlay remain unverified/unimplemented respectively.",
+    "Dev.13: Pins the same retry/live-TS implementation; no native lifecycle or Bionic evidence added. Product exit gates remain open."
   ],
   "milestones": [
     {
@@ -24,5 +25,5 @@
       "remoteId": null
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.12"
+  "developmentCheckpoint": "v0.1.0-dev.13"
 }

@@ -23,3 +23,8 @@ No product milestone or physical/account gate is completed by this checkpoint.
 ## dev.12 increment
 
 Pins the shared reception/Cast-budget implementation. Bionic operation and native UxPlay remain unverified/unimplemented respectively.
+
+## dev.13 increment
+
+Pins the same retry/live-TS implementation; no native lifecycle or Bionic evidence added.
+No product milestone or physical/account gate closes with this checkpoint.
