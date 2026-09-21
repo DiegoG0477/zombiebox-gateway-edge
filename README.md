@@ -104,3 +104,17 @@ Dev.21: Pins shared dev.21 network/search/state maintenance without forking the 
 
 Pins the same dev.22 receiver-coordination core; native Termux/Bionic execution remains unverified.
 No product or physical acceptance gate closes.
+
+## LAN discovery
+
+New installations bind HTTP to `0.0.0.0:8090` on the trusted LAN and enable the
+shared UDP8098 discovery responder. Existing `runtime.env` is preserved: loopback
+HTTP bindings do not advertise onto the LAN. `ZOMBIE_DISCOVERY_BIND` optionally
+overrides the UDP address; the advertised HTTP port follows `ZOMBIE_LISTEN`.
+Android/Wi-Fi restrictions can still block broadcast. Manual pairing remains
+available; discovery does not establish Bionic/OEM or physical acceptance.
+
+## dev.23 increment
+
+Shared native discovery for LAN bindings; existing private settings remain intact.
+No product or physical acceptance gate closes.

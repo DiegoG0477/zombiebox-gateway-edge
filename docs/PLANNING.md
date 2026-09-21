@@ -62,3 +62,8 @@ Pins the same dev.22 receiver-coordination core; native Termux/Bionic execution 
 No product or physical acceptance gate closes.
 
 Verification: native installer/lifecycle shell syntax passes; the shared core passes host checks. Termux/Bionic execution is unverified.
+
+## dev.23 increment
+
+Native shared discovery on LAN bindings; existing loopback configuration preserved.
+Product exit gates and deferred physical acceptance remain open.

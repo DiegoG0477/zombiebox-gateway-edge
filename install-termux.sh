@@ -52,7 +52,7 @@ chmod 700 "$runtime" "$runtime/config" "$runtime/state"
 [[ -f "$runtime/config/providers.json" ]] || printf '{}\n' >"$runtime/config/providers.json"
 if [[ ! -f "$runtime/config/runtime.env" ]]; then
     token=$(od -An -N32 -tx1 /dev/urandom | tr -d ' \n')
-    printf 'ZOMBIE_RELAY_ADMIN_TOKEN=%s\nZOMBIE_LISTEN=127.0.0.1:8090\nZOMBIE_RTSP_LISTEN=127.0.0.1:8554\n' "$token" >"$runtime/config/runtime.env"
+    printf 'ZOMBIE_RELAY_ADMIN_TOKEN=%s\nZOMBIE_LISTEN=0.0.0.0:8090\nZOMBIE_RTSP_LISTEN=127.0.0.1:8554\n' "$token" >"$runtime/config/runtime.env"
 fi
 if $with_cast; then
     # Build in a disposable copy; never generate files or apply changes inside the reference clone.
@@ -116,6 +116,11 @@ set -a
 set +a
 export GOMEMLIMIT=192MiB GOMAXPROCS=2
 set -- -probe-dir "$HOME/.zombie/probes" -listen "$ZOMBIE_LISTEN" -state "$HOME/.zombie/state/gateway.db" -media-dir "$HOME/.zombie/media" -config "$HOME/.zombie/config/providers.json" -media-tools
+# Discovery is only advertised for LAN bindings; preserve existing loopback installs.
+case "$ZOMBIE_LISTEN" in
+  127.*|localhost:*|\[::1\]:*) ;;
+  *) set -- "$@" -discovery-listen "${ZOMBIE_DISCOVERY_BIND:-0.0.0.0:8098}" -discovery-http-port "${ZOMBIE_LISTEN##*:}" ;;
+esac
 if [ -f "$HOME/.zombie/config/cast.enabled" ]; then
   set -- "$@" -relay-url http://127.0.0.1:8888 -relay-control-url http://127.0.0.1:9997
 fi
