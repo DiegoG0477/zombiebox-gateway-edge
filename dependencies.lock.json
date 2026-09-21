@@ -3,7 +3,7 @@
   "dependencies": {
     "gateway-core": {
       "environment": "ZOMBIE_CORE_DIR",
-      "commit": "1da9411df1b8859925af7a3df60ddf7fc7351a3e",
+      "commit": "458be2cabd87756092fcbf2912bc5abdf36b1812",
       "remote": null
     }
   }
