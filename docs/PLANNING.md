@@ -44,3 +44,7 @@ Product exit gates and physical/account acceptance remain open.
 Consumes dev.17 shared core and installs its first-party license/notice; no new Bionic runtime validation.
 
 No product milestone or physical gate is closed.
+
+## dev.18 increment
+
+Dev.18: bounded persistent artwork derivatives, restart reuse, private cache keys, device/layout profiles and conditional HTTP caching. No physical milestone closes.

@@ -83,3 +83,7 @@ process-level wake lock; coordinate that with other Termux workloads.
 ## License
 
 First-party code: [GPL-3.0-only](LICENSE). See [NOTICE](NOTICE) for third-party scope.
+
+Dev.18 retains processed artwork across restarts in `artwork` beside the configured SQLite state file.
+The shared cache defaults to 64 MiB/24 hours; `-artwork-cache-mb 0` disables disk
+persistence. Source URLs/credentials/original images are not stored in cache files.
