@@ -53,3 +53,8 @@ platform binary or native UxPlay support is implied. Native operation, boot/wake
 lifecycle and the Android module support matrix remain separate work.
 
 Dev.13: Pins the same retry/live-TS implementation; no native lifecycle or Bionic evidence added.
+
+## dev.14 increment
+
+Pins the shared HLS/DASH adapter; native FFmpeg and Termux/Bionic execution remain unverified.
+The four requested block-1 changes are implemented; physical acceptance and broader product gates remain open.

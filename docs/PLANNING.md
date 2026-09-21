@@ -28,3 +28,8 @@ Pins the shared reception/Cast-budget implementation. Bionic operation and nativ
 
 Pins the same retry/live-TS implementation; no native lifecycle or Bionic evidence added.
 No product milestone or physical/account gate closes with this checkpoint.
+
+## dev.14 increment
+
+Pins the shared HLS/DASH adapter; native FFmpeg and Termux/Bionic execution remain unverified.
+The four requested block-1 changes are implemented; physical acceptance and broader product gates remain open.
