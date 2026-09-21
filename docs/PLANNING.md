@@ -48,3 +48,10 @@ No product milestone or physical gate is closed.
 ## dev.18 increment
 
 Dev.18: bounded persistent artwork derivatives, restart reuse, private cache keys, device/layout profiles and conditional HTTP caching. No physical milestone closes.
+
+## dev.21 increment
+
+Pins shared dev.21 network/search/state maintenance without forking the core or claiming native runtime acceptance.
+No physical, account or product milestone closes.
+
+Verification: installer/lifecycle shell syntax passes; the pinned core passes host Go and contract checks. Termux/Bionic execution remains unverified.

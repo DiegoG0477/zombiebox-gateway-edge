@@ -97,3 +97,5 @@ standalone `scripts/doctor.py` is Termux-only at its CLI boundary; host fixtures
 exercise report generation without pretending to run Android. Tool presence does
 not imply module/account readiness, and the report never reads service run files,
 provider configuration or tokens.
+
+Dev.21: Pins shared dev.21 network/search/state maintenance without forking the core or claiming native runtime acceptance.
