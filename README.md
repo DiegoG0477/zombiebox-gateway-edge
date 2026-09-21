@@ -37,3 +37,8 @@ The central workspace owns product-wide ADRs, the original specification, the UI
 reference, M0–M11 exit gates and the complete development/validation gap audit.
 Physical devices over USB/ADB are the default; automated checks do not establish
 legacy runtime or end-to-end account/media compatibility.
+
+Dev.10 consumes the same local audio-track/text-subtitle core as Full. The installer
+already enables `-media-tools`; its native Termux FFmpeg supplies the implementation.
+Host tests do not establish Bionic decoder/subtitle compatibility. No parallel Go
+implementation or Linux runtime binary is introduced.
