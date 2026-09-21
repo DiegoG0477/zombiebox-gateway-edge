@@ -17,7 +17,8 @@
     "Dev.20: Pins shared dev.20 core and adds bounded version/resource/installation diagnostics without reading private service configuration. Product and physical exit gates remain open.",
     "Dev.21: Pins shared dev.21 network/search/state maintenance without forking the core or claiming native runtime acceptance. Product/physical exit gates remain open.",
     "Dev.22: Pins the same dev.22 receiver-coordination core; native Termux/Bionic execution remains unverified. Product and physical exit gates remain open.",
-    "Dev.23: Native shared discovery on LAN bindings; existing loopback configuration preserved. Product and physical gates remain open."
+    "Dev.23: Native shared discovery on LAN bindings; existing loopback configuration preserved. Product and physical gates remain open.",
+    "Dev.24: Consumes the same companion core and installs its QR encoder license. This adds no Linux binary, Docker requirement or native Android execution evidence. Product and physical gates remain open."
   ],
   "milestones": [
     {
@@ -35,5 +36,5 @@
       "remoteId": null
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.23"
+  "developmentCheckpoint": "v0.1.0-dev.24"
 }

@@ -67,3 +67,11 @@ Verification: native installer/lifecycle shell syntax passes; the shared core pa
 
 Native shared discovery on LAN bindings; existing loopback configuration preserved.
 Product exit gates and deferred physical acceptance remain open.
+
+
+## dev.24 increment
+
+Consumes the same companion core and installs its QR encoder license. This adds no Linux binary, Docker requirement or native Android execution evidence.
+Full visual/capture policy, extended Remote, HEVC/4K and other product gates remain open; physical acceptance stays deferred.
+
+Verification: Shell syntax and the exact core dependency pin pass on Fedora. No Termux/Bionic runtime claim is made.

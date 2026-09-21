@@ -118,3 +118,9 @@ available; discovery does not establish Bionic/OEM or physical acceptance.
 
 Shared native discovery for LAN bindings; existing private settings remain intact.
 No product or physical acceptance gate closes.
+
+
+## dev.24 increment
+
+Consumes the same companion core and installs its QR encoder license. This adds no Linux binary, Docker requirement or native Android execution evidence.
+Full visual/capture policy, extended Remote, HEVC/4K and other product gates remain open; physical acceptance stays deferred.
