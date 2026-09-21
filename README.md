@@ -37,3 +37,14 @@ Install native Python, pkg-config, libogg, libvorbis, libflac and mpg123 decode
 libraries before the Spotify build. The installer checks native metadata and
 fails instead of downloading Linux binaries. Services start disabled; existing
 provider credentials and direct IPTV lists are preserved. See each wrapper README.
+
+YouTube TV Code/DIAL has a separate optional native installer:
+
+```sh
+bash gateway-edge/install-youtube-receiver.sh
+```
+
+It requires the shared gateway and native Node/npm/Python. It installs a stopped
+`zombie-youtube-receiver` runit service and a disabled provider entry. Read the
+[receiver workflow](../wrappers/youtube-receiver/README.md) before enabling it;
+Termux multicast/discovery and native runtime are not yet verified.
