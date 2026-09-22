@@ -136,3 +136,8 @@ Product milestones, physical validation and public distribution remain open.
 
 Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open.
 Product exit gates and deferred physical acceptance remain open.
+
+## dev.35 checkpoint
+
+Pins the same dev.35 queue/adaptation/listening implementation with a real core remote. No Linux binary or fork; Bionic runtime and optional prebuilt modules remain unverified.
+Product milestone completion still requires its recorded acceptance gates.

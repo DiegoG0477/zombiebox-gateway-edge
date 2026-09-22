@@ -3,7 +3,7 @@
   "repository": "zombiebox-gateway-edge",
   "productRegistry": "workspace:docs/milestones.json",
   "notes": [
-    "Local component scope; product exit gates remain open. No hosted milestones exist.",
+    "Local component scope; product exit gates remain open. Hosted milestones are open; see remoteURL entries.",
     "Dev.10: shared local media tracks/text subtitles and client Home refinement. Cast consumes the protocol transport update. Product exit gates remain open.",
     "Dev.11: Pins the same remote/browse core and adaptive YouTube worker. Native Termux/Bionic validation and operation lifecycle remain open. Product exit gates remain open.",
     "Dev.12: Pins the shared reception/Cast-budget implementation. Bionic operation and native UxPlay remain unverified/unimplemented respectively.",
@@ -26,7 +26,8 @@
     "Dev.30: Pins the shared phone-media core with bounded temporary storage beside SQLite and existing FFmpeg tools. Existing dev.26 Bionic artifacts are unchanged; no new Android runtime claim. Product and physical gates remain open.",
     "Dev.31: Pins the shared native-inventory validation/export core. Existing dev.26 Bionic archives retain their original provenance; they are not relabeled or claimed to contain this source. Product gates remain open.",
     "Dev.32: Pins the shared legacy phone-file container increment. New Android/Bionic candidate build evidence belongs to the workspace checkpoint; old archives retain their own version and source pins. Product gates remain open.",
-    "Dev.34: Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open."
+    "Dev.34: Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open.",
+    "Dev.35: Pins the same dev.35 queue/adaptation/listening implementation with a real core remote. No Linux binary or fork; Bionic runtime and optional prebuilt modules remain unverified."
   ],
   "milestones": [
     {
@@ -34,15 +35,18 @@
       "title": "Gateway Edge",
       "status": "in_progress",
       "completedAt": null,
-      "remoteId": null
+      "remoteId": 1,
+      "remoteURL": "https://github.com/DiegoG0477/zombiebox-gateway-edge/milestone/1"
     },
     {
       "id": "M11",
       "title": "Public beta",
       "status": "planned",
       "completedAt": null,
-      "remoteId": null
+      "remoteId": 2,
+      "remoteURL": "https://github.com/DiegoG0477/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.34"
+  "developmentCheckpoint": "v0.1.0-dev.35",
+  "remote": "https://github.com/DiegoG0477/zombiebox-gateway-edge"
 }

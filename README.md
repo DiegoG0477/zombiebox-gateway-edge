@@ -2,8 +2,9 @@
 
 Native Android/Termux deployment of the same Go core.
 
-This is an independent repository in the Zombie Box workspace. Remotes and hosted
-releases are not configured yet; local commits/tags and dependency pins are real.
+This is an independent repository in the Zombie Box workspace.
+[Source and milestones](https://github.com/DiegoG0477/zombiebox-gateway-edge) are hosted on GitHub.
+Development checkpoints are not stable releases or physical compatibility claims.
 
 Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
@@ -248,3 +249,7 @@ Product milestones, physical validation and public distribution remain open.
 ## dev.34 increment
 
 Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open.
+
+## dev.35 increment
+
+Pins the same dev.35 queue/adaptation/listening implementation with a real core remote. No Linux binary or fork; Bionic runtime and optional prebuilt modules remain unverified.
