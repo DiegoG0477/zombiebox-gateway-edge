@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Read bounded native Edge resource/tool facts without opening private configuration."""
 
+import argparse
 import json
 import os
 import platform
@@ -124,11 +125,73 @@ def module_status(runtime, prefix):
     return result
 
 
+def network_report(runtime, address, http_port, discovery_port, rtsp_port):
+    """Explicitly invoke the shared core; never print its stderr or private configuration."""
+    args = [str(runtime / "bin/zombied"), "--diagnose-address", address]
+    for name, value in (
+        ("http", http_port),
+        ("discovery", discovery_port),
+        ("rtsp", rtsp_port),
+    ):
+        args += [f"--diagnose-{name}-port", str(value)]
+    try:
+        result = subprocess.run(
+            args, capture_output=True, text=True, timeout=4, check=False
+        )
+        if result.returncode != 0 or len(result.stdout) > 16384:
+            return {"state": "unavailable_or_unsupported"}
+        value = json.loads(result.stdout)
+        if not isinstance(value, dict) or value.get("reportVersion") != 1:
+            return {"state": "unavailable_or_unsupported"}
+        statuses = {
+            "ok",
+            "unavailable",
+            "invalid_response",
+            "authentication_required",
+            "port_mismatch",
+        }
+        probes = {}
+        for key in ("httpHealth", "discoveryUnicast", "rtspOptions"):
+            probe = value[key]
+            if (
+                probe["state"] not in statuses
+                or not isinstance(probe["elapsedMs"], int)
+                or not 0 <= probe["elapsedMs"] <= 10000
+            ):
+                raise ValueError("invalid probe result")
+            probes[key] = {"state": probe["state"], "elapsedMs": probe["elapsedMs"]}
+        return {**probes, "mediaValidated": False, "accountValidated": False}
+    except (OSError, subprocess.TimeoutExpired, ValueError, KeyError, TypeError):
+        return {"state": "unavailable_or_unsupported"}
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--network",
+        action="store_true",
+        help="probe one selected endpoint, without pairing or media",
+    )
+    parser.add_argument(
+        "--address", default="127.0.0.1", help="literal local IPv4; loopback by default"
+    )
+    parser.add_argument("--http-port", type=int, default=8090)
+    parser.add_argument("--discovery-port", type=int, default=8098)
+    parser.add_argument("--rtsp-port", type=int, default=8554)
+    args = parser.parse_args()
     prefix = os.environ.get("PREFIX", "")
     if prefix != "/data/data/com.termux/files/usr":
         raise SystemExit("Run inside Termux on Android.")
-    print(json.dumps(report(Path.home() / ".zombie", Path(prefix)), indent=2))
+    runtime = Path.home() / ".zombie"
+    value = report(runtime, Path(prefix))
+    if args.network:
+        value["network"] = network_report(
+            runtime, args.address, args.http_port, args.discovery_port, args.rtsp_port
+        )
+        value["limitations"][1] = (
+            "Selected-endpoint probes exclude credentials, media, pairing and broadcast/multicast qualification. Loopback is not evidence of access from another device."
+        )
+    print(json.dumps(value, indent=2))
 
 
 if __name__ == "__main__":

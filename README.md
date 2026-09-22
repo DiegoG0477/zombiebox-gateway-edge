@@ -259,3 +259,9 @@ Pins the same dev.35 queue/adaptation/listening implementation with a real core 
 ## dev.37 increment
 
 [Optional binary modules and status matrix](docs/optional-modules.md). Doctor now separates installed files, running/stopped services, runtime-version compatibility and unprobed account/media readiness.
+
+## dev.40 reception and diagnostics increment
+
+Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. Product milestones remain open.
+
+[Shared endpoint diagnostic contract](https://github.com/ZombieBox-tv/zombiebox-gateway-core/blob/v0.1.0-dev.40/docs/endpoint-diagnostics.md).

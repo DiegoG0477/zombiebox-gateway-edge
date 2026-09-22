@@ -57,7 +57,7 @@ case ${1:-status} in
         done
         ;;
     doctor)
-        python3 "$component/scripts/doctor.py"
+        python3 "$component/scripts/doctor.py" "${@:2}"
         failed=0
         programs=(sv ffmpeg ffprobe termux-wake-lock termux-wake-unlock)
         [[ -f $component/release.json ]] || programs+=(go clang)

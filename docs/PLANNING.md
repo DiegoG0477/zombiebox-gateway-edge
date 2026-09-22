@@ -150,3 +150,7 @@ Compiler-free Threadfin Android module installer/builder and separated module di
 ## dev.38 implementation checkpoint
 
 Dev.38: MediaMTX compiler-free Android modules, pinned inline BSD notice review and source subset inventory. Other optional modules, Full distribution and physical acceptance remain open.
+
+## dev.40 reception and diagnostics increment
+
+Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. Product milestones remain open.
