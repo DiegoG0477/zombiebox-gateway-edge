@@ -111,3 +111,8 @@ publish a release. Actual Termux install/start/upgrade/SQLite/discovery/boot and
 ## dev.27 increment
 
 Pins the same 1080p negotiation core as Full. The preserved dev.26 Android bundles retain their original provenance; they were not relabeled as dev.27 artifacts. No new native runtime evidence or optional module completion is claimed.
+
+## dev.29 increment
+
+Pins the same audio-only Cast core without a fork. Existing dev.26 Bionic archives retain their provenance; optional MediaMTX packaging and native runtime acceptance remain open.
+Product milestones and physical acceptance remain open.
