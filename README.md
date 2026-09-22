@@ -10,7 +10,7 @@ Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
 ## Installation
 
-### Prebuilt Android bundle (experimental dev.36)
+### Prebuilt Android bundle (experimental dev.38)
 
 Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
 userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
@@ -20,16 +20,16 @@ Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
 Download the version-pinned installer and review it, then install the core bundle:
 
 ```sh
-bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.36
+bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.38
 ```
 
 Equivalent one-line installation from the pinned release:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.36/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.36
+curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.38/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.38
 ```
 
-The [experimental release](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.36) pairs each ABI archive with its corresponding-source archive and checksums.
+The [experimental release](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) pairs each ABI archive with its corresponding-source archive and checksums.
 For a locally transferred build, supply its independently checked SHA256:
 
 ```sh
@@ -51,7 +51,7 @@ zombiebox doctor
 zombiebox stop
 zombiebox boot-enable     # optional Termux:Boot hook
 zombiebox boot-disable
-zombiebox update --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.36
+zombiebox update --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.38
 zombiebox uninstall       # removes services, retains private data
 ```
 

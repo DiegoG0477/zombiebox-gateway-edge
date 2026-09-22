@@ -7,7 +7,7 @@ work with direct M3U/XMLTV without Threadfin.
 | Module | Binary packaging at dev.38 | Remaining boundary |
 |---|---|---|
 | Threadfin 1.2.40 | ARMv7/ARM64 Android API24 PIE builder, source/dependency archives, ELF audit and compiler-free installer | Android execution, service/SSDP and workload acceptance deferred |
-| MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; public dev.38 assets not yet published |
+| MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; [public dev.38 assets](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) available |
 | YouTube / TV receiver | Existing native source installation and pinned Node22 contract | Compiler-free compatible Node/runtime bundle still required |
 | Spotify | Existing native source installation | Android native codec dependency closure and binary bundle |
 | AirPlay / UxPlay | Experimental native source installation | Android GStreamer/OpenSSL/libplist closure and binary bundle |
@@ -64,10 +64,10 @@ MediaMTX inline notice is handled by an exact package/source review below.
 
 ## MediaMTX installation and inline notice review
 
-With a dev.38 launcher, install the matching ABI archive and start explicitly:
+With a dev.38 launcher, install the published matching ABI module and start explicitly:
 
 ```sh
-zombiebox module --module mediamtx --bundle /path/zombiebox-mediamtx-android-arm64.tar.gz --sha256 EXPECTED_SHA256
+zombiebox module --module mediamtx --version v0.1.0-dev.38
 zombiebox start zombie-mediamtx
 zombiebox stop zombied
 zombiebox start zombied
