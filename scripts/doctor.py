@@ -165,8 +165,63 @@ def network_report(runtime, address, http_port, discovery_port, rtsp_port):
         return {"state": "unavailable_or_unsupported"}
 
 
+def media_report(runtime):
+    """The shared core owns bounded fixture generation and actual software decoding."""
+    try:
+        result = subprocess.run(
+            [str(runtime / "bin/zombied"), "--diagnose-media"],
+            capture_output=True,
+            text=True,
+            timeout=35,
+            check=False,
+        )
+        if result.returncode != 0 or len(result.stdout) > 16384:
+            return {"state": "unavailable_or_unsupported"}
+        value = json.loads(result.stdout)
+        if not isinstance(value, dict) or value.get("reportVersion") != 1:
+            raise ValueError("unknown report")
+        stages = {}
+        for key in ("fixture", "remux", "transcode"):
+            stage = value[key]
+            if stage["state"] not in {
+                "pass",
+                "failed",
+                "unavailable",
+                "cancelled",
+                "not_run",
+            }:
+                raise ValueError("unknown state")
+            counts = [stage["videoFrames"], stage["audioFrames"]]
+            if any(
+                type(count) is not int or not 0 <= count <= 1000 for count in counts
+            ):
+                raise ValueError("invalid frame evidence")
+            if stage["state"] == "pass" and min(counts) < 5:
+                raise ValueError("missing decoded frames")
+            stages[key] = {
+                "state": stage["state"],
+                "videoFrames": counts[0],
+                "audioFrames": counts[1],
+            }
+        return {
+            **stages,
+            "gatewayPipelineVerified": all(
+                stage["state"] == "pass" for stage in stages.values()
+            ),
+            "receiverValidated": False,
+            "networkValidated": False,
+        }
+    except (OSError, subprocess.TimeoutExpired, ValueError, KeyError, TypeError):
+        return {"state": "unavailable_or_unsupported"}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--media",
+        action="store_true",
+        help="generate, convert and decode a small local software fixture",
+    )
     parser.add_argument(
         "--network",
         action="store_true",
@@ -191,6 +246,8 @@ def main():
         value["limitations"][1] = (
             "Selected-endpoint probes exclude credentials, media, pairing and broadcast/multicast qualification. Loopback is not evidence of access from another device."
         )
+    if args.media:
+        value["media"] = media_report(runtime)
     print(json.dumps(value, indent=2))
 
 

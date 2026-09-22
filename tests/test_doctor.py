@@ -110,3 +110,47 @@ class NetworkDoctorTests(unittest.TestCase):
                 doctor.network_report(Path("/runtime"), "127.0.0.1", 8090, 8098, 8554),
                 {"state": "unavailable_or_unsupported"},
             )
+
+
+class MediaDoctorTests(unittest.TestCase):
+    def test_decode_evidence_does_not_promote_receiver_or_network_support(self):
+        payload = {
+            "reportVersion": 1,
+            **{
+                key: {"state": "pass", "videoFrames": 10, "audioFrames": 44}
+                for key in ("fixture", "remux", "transcode")
+            },
+            "receiverValidated": True,
+            "secret": "private",
+        }
+        with patch.object(
+            doctor.subprocess,
+            "run",
+            return_value=subprocess.CompletedProcess(
+                [], 0, json.dumps(payload), "private stderr"
+            ),
+        ) as run:
+            report = doctor.media_report(Path("/runtime"))
+        self.assertTrue(report["gatewayPipelineVerified"])
+        self.assertFalse(report["receiverValidated"])
+        self.assertFalse(report["networkValidated"])
+        self.assertNotIn("private", str(report))
+        self.assertEqual(run.call_args.kwargs["timeout"], 35)
+        payload["transcode"]["audioFrames"] = 0
+        with patch.object(
+            doctor.subprocess,
+            "run",
+            return_value=subprocess.CompletedProcess([], 0, json.dumps(payload), ""),
+        ):
+            self.assertEqual(
+                doctor.media_report(Path("/runtime")),
+                {"state": "unavailable_or_unsupported"},
+            )
+
+    def test_missing_core_or_timeout_is_not_decoder_failure(self):
+        for failure in (FileNotFoundError(), subprocess.TimeoutExpired([], 35)):
+            with patch.object(doctor.subprocess, "run", side_effect=failure):
+                self.assertEqual(
+                    doctor.media_report(Path("/runtime")),
+                    {"state": "unavailable_or_unsupported"},
+                )

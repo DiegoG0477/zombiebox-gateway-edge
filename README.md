@@ -271,3 +271,7 @@ Optional doctor --network consumes the shared core endpoint report, redacts unsu
 Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. Product and physical gates remain open.
 
 Dev.42: pin the shared preferred-audio planner. Public core binaries remain dev.40; remaining optional prebuilt modules and Android runtime acceptance remain open.
+
+## dev.43 navigation and functional media increment
+
+Dev.43: optional doctor --media validates bounded decoded-frame evidence through the shared core without granting receiver/network support. Older binaries remain unavailable/unsupported. Other optional Node/Spotify/AirPlay binary modules and physical gates remain open.

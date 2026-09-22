@@ -97,3 +97,11 @@ original source ZIPs. All emitted dependency notices also accompany the source b
 Primary evidence: [pinned keywrap source and notice](https://github.com/benburkert/openpgp/blob/c2471f86866c/aes/keywrap/keywrap.go)
 and [the gosrt import](https://github.com/datarhei/gosrt/blob/a77b40bb4b76b9d1018fa41c6a7fa6ed34af95bf/crypto/crypto.go).
 The original module cache and reference clones are never modified.
+
+## Functional media diagnostic (dev.43 source)
+
+`zombiebox doctor --media` invokes the shared core's bounded local fixture,
+remux/transcode and decoded-frame checks. It reads no provider configuration and
+starts no service. Missing/old core flags remain unavailable. Software pipeline
+success never establishes network, receiver, account or Android hardware support.
+It can be combined with `--network` for the separate existing endpoint checks.
