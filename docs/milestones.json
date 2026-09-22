@@ -20,7 +20,8 @@
     "Dev.23: Native shared discovery on LAN bindings; existing loopback configuration preserved. Product and physical gates remain open.",
     "Dev.24: Consumes the same companion core and installs its QR encoder license. This adds no Linux binary, Docker requirement or native Android execution evidence. Product and physical gates remain open.",
     "Dev.25: Verified Android binary bootstrap, ABI/API checks, preserved config/SQLite, lifecycle launcher and NDK/cgo candidate build workflow. Actual Android cross-build/runtime and optional prebuilt modules remain pending.",
-    "Dev.26: ARMv7/ARM64 Android candidates cross-built and host-audited against API24; real Termux execution and publication remain deferred."
+    "Dev.26: ARMv7/ARM64 Android candidates cross-built and host-audited against API24; real Termux execution and publication remain deferred.",
+    "Dev.27: Pins the same 1080p negotiation core as Full. The preserved dev.26 Android bundles retain their original provenance; they were not relabeled as dev.27 artifacts. No new native runtime evidence or optional module completion is claimed."
   ],
   "milestones": [
     {
@@ -38,5 +39,5 @@
       "remoteId": null
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.26"
+  "developmentCheckpoint": "v0.1.0-dev.27"
 }

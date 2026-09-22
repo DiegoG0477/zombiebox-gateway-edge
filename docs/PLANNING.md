@@ -107,3 +107,7 @@ installer validation, then independently repeats the ELF audit. The manual CI
 workflow records this report before uploading candidate artifacts; it does not
 publish a release. Actual Termux install/start/upgrade/SQLite/discovery/boot and
 16-KiB-device execution remain in the deferred physical track.
+
+## dev.27 increment
+
+Pins the same 1080p negotiation core as Full. The preserved dev.26 Android bundles retain their original provenance; they were not relabeled as dev.27 artifacts. No new native runtime evidence or optional module completion is claimed.
