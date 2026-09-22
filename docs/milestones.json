@@ -25,7 +25,8 @@
     "Dev.29: Pins the same audio-only Cast core without a fork. Existing dev.26 Bionic archives retain their provenance; optional MediaMTX packaging and native runtime acceptance remain open. Product and physical gates remain open.",
     "Dev.30: Pins the shared phone-media core with bounded temporary storage beside SQLite and existing FFmpeg tools. Existing dev.26 Bionic artifacts are unchanged; no new Android runtime claim. Product and physical gates remain open.",
     "Dev.31: Pins the shared native-inventory validation/export core. Existing dev.26 Bionic archives retain their original provenance; they are not relabeled or claimed to contain this source. Product gates remain open.",
-    "Dev.32: Pins the shared legacy phone-file container increment. New Android/Bionic candidate build evidence belongs to the workspace checkpoint; old archives retain their own version and source pins. Product gates remain open."
+    "Dev.32: Pins the shared legacy phone-file container increment. New Android/Bionic candidate build evidence belongs to the workspace checkpoint; old archives retain their own version and source pins. Product gates remain open.",
+    "Dev.34: Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open."
   ],
   "milestones": [
     {
@@ -43,5 +44,5 @@
       "remoteId": null
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.32"
+  "developmentCheckpoint": "v0.1.0-dev.34"
 }

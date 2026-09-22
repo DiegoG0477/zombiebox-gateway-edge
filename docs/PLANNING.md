@@ -131,3 +131,8 @@ Product milestone and physical/public distribution gates remain open.
 
 Pins the shared legacy phone-file container increment. New Android/Bionic candidate build evidence belongs to the workspace checkpoint; old archives retain their own version and source pins.
 Product milestones, physical validation and public distribution remain open.
+
+## dev.34 implementation checkpoint
+
+Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open.
+Product exit gates and deferred physical acceptance remain open.
