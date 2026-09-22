@@ -34,7 +34,8 @@
     "Dev.38: existing repository transferred to ZombieBox-tv with preserved identity/history/releases/milestones. No product completion or physical acceptance is implied.",
     "Dev.39: consume the shared core scoped Stremio search continuation. Packaging checks do not claim a new binary release, deployment or physical acceptance.",
     "Dev.40: Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. No product or physical gate closes.",
-    "Dev.41: Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. No milestone closes."
+    "Dev.41: Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. No milestone closes.",
+    "Dev.42: pin the shared preferred-audio planner. Public core binaries remain dev.40; remaining optional prebuilt modules and Android runtime acceptance remain open."
   ],
   "milestones": [
     {
@@ -54,6 +55,6 @@
       "remoteURL": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.38",
+  "developmentCheckpoint": "v0.1.0-dev.42",
   "remote": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge"
 }

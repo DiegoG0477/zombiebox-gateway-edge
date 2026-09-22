@@ -158,3 +158,7 @@ Optional doctor --network consumes the shared core endpoint report, redacts unsu
 ## dev.41 guide and audio selection increment
 
 Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. Product and physical gates remain open.
+
+## dev.42 navigation and preferred-audio increment
+
+Dev.42: pin the shared preferred-audio planner. Public core binaries remain dev.40; remaining optional prebuilt modules and Android runtime acceptance remain open.
