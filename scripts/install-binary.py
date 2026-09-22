@@ -80,6 +80,10 @@ def validate(package, arch, api):
         "LICENSE",
         "NOTICE",
         "licenses/go-qrcode-LICENSE",
+        "licenses/go-sqlite3-LICENSE",
+        "licenses/go-LICENSE",
+        "licenses/ndk-NOTICE",
+        "licenses/ndk-NOTICE.toolchain",
         "runtime/zombied.sh",
         "runtime/zombiebox.sh",
     }

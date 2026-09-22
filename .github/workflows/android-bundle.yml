@@ -31,6 +31,10 @@ jobs:
           CANDIDATE_VERSION: ${{ inputs.version }}
           CANDIDATE_ARCH: ${{ matrix.arch }}
         run: python3 scripts/build-release.py --ndk "$ANDROID_HOME/ndk/28.2.13676358" --version "$CANDIDATE_VERSION" --arch "$CANDIDATE_ARCH" --output dist
+      - name: Audit the actual archive
+        env:
+          CANDIDATE_ARCH: ${{ matrix.arch }}
+        run: python3 scripts/verify-release.py --bundle "dist/zombiebox-gateway-android-$CANDIDATE_ARCH.tar.gz" --arch "$CANDIDATE_ARCH" --ndk "$ANDROID_HOME/ndk/28.2.13676358" > "dist/audit-$CANDIDATE_ARCH.json"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: edge-android-${{ matrix.arch }}

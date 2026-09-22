@@ -12,6 +12,8 @@ import tarfile
 import tempfile
 from pathlib import Path
 
+from audit_android import audit
+
 ROOT = Path(__file__).resolve().parents[1]
 NDK_VERSION = "28.2.13676358"
 
@@ -53,6 +55,7 @@ def build(core, ndk, output, version, arch):
             env=env,
             check=True,
         )
+        binary_audit = audit(package / "bin/zombied", ndk, arch)
         for name in (
             "edge.sh",
             "install.sh",
@@ -73,11 +76,21 @@ def build(core, ndk, output, version, arch):
         )
         # The bundled SQLite driver is compiled into this executable.
         go_cache = Path(
-            subprocess.check_output(["go", "env", "GOMODCACHE"], text=True).strip()
+            subprocess.check_output(
+                ["go", "env", "GOMODCACHE"], env=env, text=True
+            ).strip()
         )
         shutil.copy2(
             go_cache / "github.com/mattn/go-sqlite3@v1.14.32/LICENSE",
             package / "licenses/go-sqlite3-LICENSE",
+        )
+        go_root = Path(
+            subprocess.check_output(["go", "env", "GOROOT"], env=env, text=True).strip()
+        )
+        shutil.copy2(go_root / "LICENSE", package / "licenses/go-LICENSE")
+        shutil.copy2(ndk / "NOTICE", package / "licenses/ndk-NOTICE")
+        shutil.copy2(
+            ndk / "NOTICE.toolchain", package / "licenses/ndk-NOTICE.toolchain"
         )
         subprocess.run(
             [
@@ -117,6 +130,7 @@ def build(core, ndk, output, version, arch):
                 ).strip()
             ),
             "publicationReady": False,
+            "binaryAudit": binary_audit,
             "files": {
                 str(path.relative_to(package)): hashlib.sha256(
                     path.read_bytes()

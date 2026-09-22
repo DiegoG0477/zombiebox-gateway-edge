@@ -9,7 +9,7 @@ Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
 ## Installation
 
-### Prebuilt Android bundle (first build/publication pending)
+### Prebuilt Android bundle (local candidates built; publication pending)
 
 Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
 userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
@@ -192,3 +192,31 @@ Full visual/capture policy, extended Remote, HEVC/4K and other product gates rem
 ## dev.25 increment
 
 Verified Android binary bootstrap, ABI/API checks, preserved config/SQLite, lifecycle launcher and NDK/cgo candidate build workflow. Actual Android cross-build/runtime and optional prebuilt modules remain pending.
+
+## dev.26 increment
+
+Android/Bionic PIE candidates have now cross-built for ARMv7 and ARM64 with
+Go1.25.6, NDK28.2.13676358 and cgo SQLite. Both use Android's linker, depend only
+on libc/libdl/liblog and resolve every required dynamic import against API24 NDK
+stubs. ARM64 LOAD alignment is 16 KiB; ARMv7 is 4 KiB. These are host artifact
+checks, not Bionic execution or physical acceptance. Optional modules and public
+release assets remain pending.
+
+The build now fails before packaging on unsupported API imports, unexpected
+runtime libraries, wrong ABI/linker or insufficient page alignment. Bundles include
+Go, SQLite, QR and NDK/toolchain notices. This is not the complete distribution
+source/license audit. Nine host tests cover the installer and ELF audit policy.
+
+Maintainers can build and verify without executing Android code on the host:
+
+```sh
+python3 scripts/build-release.py --ndk /path/to/android-ndk-r28c --version v0.1.0-dev.26 --arch arm64 --output dist/v0.1.0-dev.26
+python3 scripts/verify-release.py --bundle dist/v0.1.0-dev.26/zombiebox-gateway-android-arm64.tar.gz --arch arm64 --ndk /path/to/android-ndk-r28c
+# Repeat with --arch armv7 and the corresponding archive filename.
+```
+
+The verifier exercises the bootstrap's bounded extractor, per-file checksums and
+installer validation, then independently repeats the ELF audit. The manual CI
+workflow records this report before uploading candidate artifacts; it does not
+publish a release. Actual Termux install/start/upgrade/SQLite/discovery/boot and
+16-KiB-device execution remain in the deferred physical track.
