@@ -62,9 +62,10 @@ against OEM process killing. Termux:Boot starts at boot, not whenever a charger 
 connected. See [Termux:Boot's instructions](https://github.com/termux/termux-boot/blob/master/README.md).
 
 This initial bundle contains core, SQLite and synthetic probes; FFmpeg comes from
-Termux. MediaMTX, YouTube, Spotify and experimental AirPlay still use the optional
-native source installers below. Prebuilt optional modules remain a distribution
-work item; they are not silently installed or claimed ready.
+Termux. The dev.37 [optional module path](docs/optional-modules.md) adds compiler-free
+Threadfin packaging for both ABIs. MediaMTX, YouTube, Spotify and experimental
+AirPlay still have outstanding binary packaging work; their source paths remain
+below. Modules are selected explicitly, never silently enabled.
 
 ### Available now: native source installation
 
@@ -252,3 +253,8 @@ Consumes dev.34 core pairing and remote-text implementation; native Bionic packa
 ## dev.35 increment
 
 Pins the same dev.35 queue/adaptation/listening implementation with a real core remote. No Linux binary or fork; Bionic runtime and optional prebuilt modules remain unverified.
+
+
+## dev.37 increment
+
+[Optional binary modules and status matrix](docs/optional-modules.md). Doctor now separates installed files, running/stopped services, runtime-version compatibility and unprobed account/media readiness.

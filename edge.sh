@@ -95,6 +95,10 @@ case ${1:-status} in
         echo 'Boot hook installed. Install and open Termux:Boot once; permit background operation in Android settings.'
         ;;
     boot-disable) rm -f "$HOME/.termux/boot/zombiebox" ;;
+    module)
+        shift
+        exec python3 "$component/scripts/install-module.py" "$@"
+        ;;
     update)
         shift
         if [[ -f $component/release.json ]]; then
@@ -120,7 +124,7 @@ case ${1:-status} in
         echo 'Service definitions removed. Private runtime, credentials, media and backups remain in ~/.zombie.'
         ;;
     *)
-        echo 'Usage: edge.sh start [services...] | stop | status | doctor | boot-enable [services...] | boot-disable | update [installer flags...] | uninstall' >&2
+        echo 'Usage: edge.sh start [services...] | stop | status | doctor | boot-enable [services...] | boot-disable | update [installer flags...] | module [installer flags...] | uninstall' >&2
         exit 2
         ;;
 esac

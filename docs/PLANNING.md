@@ -141,3 +141,8 @@ Product exit gates and deferred physical acceptance remain open.
 
 Pins the same dev.35 queue/adaptation/listening implementation with a real core remote. No Linux binary or fork; Bionic runtime and optional prebuilt modules remain unverified.
 Product milestone completion still requires its recorded acceptance gates.
+
+
+## dev.37 implementation checkpoint
+
+Compiler-free Threadfin Android module installer/builder and separated module diagnostics. MediaMTX dependency notice and other optional binary modules remain open; no Android execution claim.

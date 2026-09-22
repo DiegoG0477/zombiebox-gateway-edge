@@ -28,7 +28,8 @@
     "Dev.32: Pins the shared legacy phone-file container increment. New Android/Bionic candidate build evidence belongs to the workspace checkpoint; old archives retain their own version and source pins. Product gates remain open.",
     "Dev.34: Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open.",
     "Dev.35: Pins the same dev.35 queue/adaptation/listening implementation with a real core remote. No Linux binary or fork; Bionic runtime and optional prebuilt modules remain unverified.",
-    "Dev.36: Release bundles now derive corresponding module sources from each ELF and include first-party/toolchain source archives. Optional module binaries and Android execution remain separate."
+    "Dev.36: Release bundles now derive corresponding module sources from each ELF and include first-party/toolchain source archives. Optional module binaries and Android execution remain separate.",
+    "Dev.37: Compiler-free Threadfin Android module installer/builder and separated module diagnostics. MediaMTX dependency notice and other optional binary modules remain open; no Android execution claim."
   ],
   "milestones": [
     {
@@ -48,6 +49,6 @@
       "remoteURL": "https://github.com/DiegoG0477/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.36",
+  "developmentCheckpoint": "v0.1.0-dev.37",
   "remote": "https://github.com/DiegoG0477/zombiebox-gateway-edge"
 }

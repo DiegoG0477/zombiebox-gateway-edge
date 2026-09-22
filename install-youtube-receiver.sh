@@ -15,7 +15,7 @@ runtime="$HOME/.zombie"
 }
 umask 077
 mkdir -p "$runtime/youtube-receiver" "$runtime/config"
-cp "$repo/wrappers/youtube-receiver/"{package.json,package-lock.json,server.mjs,bridge.mjs,receiver.mjs,player.mjs} "$runtime/youtube-receiver/"
+cp "$repo/wrappers/youtube-receiver/"{package.json,package-lock.json,server.mjs,bridge.mjs,completion.mjs,receiver.mjs,player.mjs} "$runtime/youtube-receiver/"
 (cd "$runtime/youtube-receiver" && npm ci --ignore-scripts --omit=dev --no-audit --no-fund)
 python3 - "$runtime" <<'PY'
 import json,pathlib,secrets,sys

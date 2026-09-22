@@ -61,6 +61,7 @@ def build(core, ndk, output, version, arch):
             "edge.sh",
             "install.sh",
             "scripts/doctor.py",
+            "scripts/install-module.py",
             "scripts/install-binary.py",
             "LICENSE",
             "NOTICE",
