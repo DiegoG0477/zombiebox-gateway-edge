@@ -33,7 +33,8 @@
     "Dev.38: MediaMTX compiler-free Android modules, pinned inline BSD notice review and source subset inventory. Other optional modules, Full distribution and physical acceptance remain open.",
     "Dev.38: existing repository transferred to ZombieBox-tv with preserved identity/history/releases/milestones. No product completion or physical acceptance is implied.",
     "Dev.39: consume the shared core scoped Stremio search continuation. Packaging checks do not claim a new binary release, deployment or physical acceptance.",
-    "Dev.40: Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. No product or physical gate closes."
+    "Dev.40: Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. No product or physical gate closes.",
+    "Dev.41: Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. No milestone closes."
   ],
   "milestones": [
     {

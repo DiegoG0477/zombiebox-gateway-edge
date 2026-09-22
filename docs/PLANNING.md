@@ -154,3 +154,7 @@ Dev.38: MediaMTX compiler-free Android modules, pinned inline BSD notice review 
 ## dev.40 reception and diagnostics increment
 
 Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. Product milestones remain open.
+
+## dev.41 guide and audio selection increment
+
+Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. Product and physical gates remain open.

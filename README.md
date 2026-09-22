@@ -10,7 +10,7 @@ Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
 ## Installation
 
-### Prebuilt Android bundle (experimental dev.38)
+### Prebuilt Android bundle (experimental dev.40)
 
 Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
 userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
@@ -20,16 +20,16 @@ Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
 Download the version-pinned installer and review it, then install the core bundle:
 
 ```sh
-bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.38
+bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.40
 ```
 
 Equivalent one-line installation from the pinned release:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.38/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.38
+curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.40/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.40
 ```
 
-The [experimental release](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) pairs each ABI archive with its corresponding-source archive and checksums.
+The [experimental release](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.40) pairs each ABI archive with its corresponding-source archive and checksums.
 For a locally transferred build, supply its independently checked SHA256:
 
 ```sh
@@ -51,7 +51,7 @@ zombiebox doctor
 zombiebox stop
 zombiebox boot-enable     # optional Termux:Boot hook
 zombiebox boot-disable
-zombiebox update --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.38
+zombiebox update --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.40
 zombiebox uninstall       # removes services, retains private data
 ```
 
@@ -265,3 +265,7 @@ Pins the same dev.35 queue/adaptation/listening implementation with a real core 
 Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. Product milestones remain open.
 
 [Shared endpoint diagnostic contract](https://github.com/ZombieBox-tv/zombiebox-gateway-core/blob/v0.1.0-dev.40/docs/endpoint-diagnostics.md).
+
+## dev.41 guide and audio selection increment
+
+Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. Product and physical gates remain open.
