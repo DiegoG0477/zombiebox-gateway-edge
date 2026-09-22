@@ -126,3 +126,8 @@ Product milestones and deferred physical gates remain open.
 
 Pins the shared native-inventory validation/export core. Existing dev.26 Bionic archives retain their original provenance; they are not relabeled or claimed to contain this source.
 Product milestone and physical/public distribution gates remain open.
+
+## dev.32 increment
+
+Pins the shared legacy phone-file container increment. New Android/Bionic candidate build evidence belongs to the workspace checkpoint; old archives retain their own version and source pins.
+Product milestones, physical validation and public distribution remain open.
