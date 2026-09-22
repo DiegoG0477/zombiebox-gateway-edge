@@ -234,3 +234,8 @@ Product milestones and physical acceptance remain open.
 
 Pins the shared phone-media core with bounded temporary storage beside SQLite and existing FFmpeg tools. Existing dev.26 Bionic artifacts are unchanged; no new Android runtime claim.
 Product milestones and deferred physical gates remain open.
+
+## dev.31 increment
+
+Pins the shared native-inventory validation/export core. Existing dev.26 Bionic archives retain their original provenance; they are not relabeled or claimed to contain this source.
+Product milestone and physical/public distribution gates remain open.
