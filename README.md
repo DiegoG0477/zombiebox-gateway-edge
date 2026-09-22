@@ -3,7 +3,7 @@
 Native Android/Termux deployment of the same Go core.
 
 This is an independent repository in the Zombie Box workspace.
-[Source and milestones](https://github.com/DiegoG0477/zombiebox-gateway-edge) are hosted on GitHub.
+[Source and milestones](https://github.com/ZombieBox-tv/zombiebox-gateway-edge) are hosted on GitHub.
 Development checkpoints are not stable releases or physical compatibility claims.
 
 Depends on the exact gateway-core commit in `dependencies.lock.json`.
@@ -20,16 +20,16 @@ Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
 Download the version-pinned installer and review it, then install the core bundle:
 
 ```sh
-bash install.sh --repository DiegoG0477/zombiebox-gateway-edge --version v0.1.0-dev.36
+bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.36
 ```
 
 Equivalent one-line installation from the pinned release:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/DiegoG0477/zombiebox-gateway-edge/v0.1.0-dev.36/install.sh | bash -s -- --repository DiegoG0477/zombiebox-gateway-edge --version v0.1.0-dev.36
+curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.36/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.36
 ```
 
-The [experimental release](https://github.com/DiegoG0477/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.36) pairs each ABI archive with its corresponding-source archive and checksums.
+The [experimental release](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.36) pairs each ABI archive with its corresponding-source archive and checksums.
 For a locally transferred build, supply its independently checked SHA256:
 
 ```sh
@@ -51,7 +51,7 @@ zombiebox doctor
 zombiebox stop
 zombiebox boot-enable     # optional Termux:Boot hook
 zombiebox boot-disable
-zombiebox update --repository DiegoG0477/zombiebox-gateway-edge --version v0.1.0-dev.36
+zombiebox update --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.36
 zombiebox uninstall       # removes services, retains private data
 ```
 
@@ -63,8 +63,9 @@ connected. See [Termux:Boot's instructions](https://github.com/termux/termux-boo
 
 This initial bundle contains core, SQLite and synthetic probes; FFmpeg comes from
 Termux. The dev.37 [optional module path](docs/optional-modules.md) adds compiler-free
-Threadfin packaging for both ABIs. MediaMTX, YouTube, Spotify and experimental
-AirPlay still have outstanding binary packaging work; their source paths remain
+Threadfin packaging for both ABIs. Dev.38 adds the MediaMTX Android module builder/installer and resolves its inline
+license inventory. YouTube, Spotify and experimental AirPlay still have outstanding
+binary packaging work; their source paths remain
 below. Modules are selected explicitly, never silently enabled.
 
 ### Available now: native source installation

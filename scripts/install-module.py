@@ -15,14 +15,17 @@ import tempfile
 from pathlib import Path
 
 LIMIT = 256 << 20
-MODULES = {"threadfin": "6b9c0ccf16164eb362af0a44660228267734c5aa"}
+MODULES = {
+    "threadfin": "6b9c0ccf16164eb362af0a44660228267734c5aa",
+    "mediamtx": "048255986f7e04b859b4c4efe651448ec785ecd4",
+}
 
 
 def download(version, module, arch, directory):
     if not re.fullmatch(r"v[0-9]+\.[0-9]+\.[0-9]+(?:[.-][A-Za-z0-9.-]+)?", version):
         raise ValueError("Select an explicit release version, never latest")
     name = f"zombiebox-{module}-android-{arch}.tar.gz"
-    base = f"https://github.com/DiegoG0477/zombiebox-gateway-edge/releases/download/{version}/"
+    base = f"https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/download/{version}/"
     for suffix, size in ((".sha256", 512), ("", LIMIT)):
         subprocess.run(
             [
@@ -108,6 +111,8 @@ def validate(package, module, arch, api):
         "licenses/ndk-NOTICE",
         "licenses/ndk-NOTICE.toolchain",
     }
+    if module == "mediamtx":
+        required.add("mediamtx.yml")
     if not required.issubset(files) or actual != set(files):
         raise ValueError("Incomplete or unexpected module files")
     for name, checksum in files.items():
@@ -140,6 +145,8 @@ def install(package, module, arch, api, runtime, prefix):
     validate(package, module, arch, api)
     if not (runtime / "bin/zombied").is_file():
         raise ValueError("Install the Edge core first")
+    if module == "mediamtx" and not (runtime / "config/runtime.env").is_file():
+        raise ValueError("Install the core runtime configuration before MediaMTX")
     binary = package / "bin" / module
     binary.chmod(0o700)
     subprocess.run(
@@ -166,15 +173,41 @@ def install(package, module, arch, api, runtime, prefix):
     link.unlink(missing_ok=True)
     link.symlink_to(directory / "current/bin" / module)
     link.replace(runtime / "bin" / module)
-    (runtime / "threadfin").mkdir(exist_ok=True, mode=0o700)
-    (service / "run").write_text(
-        "#!/data/data/com.termux/files/usr/bin/sh\n"
-        "export GOMEMLIMIT=128MiB GOMAXPROCS=1\n"
-        'exec "$HOME/.zombie/bin/threadfin" -config "$HOME/.zombie/threadfin" -bind 127.0.0.1 -port 34400\n'
-    )
+    (service / "run").write_text(service_script(module, runtime, release))
     (service / "run").chmod(0o700)
     print(
-        "Installed Threadfin stopped; configuration preserved. Start with zombiebox start zombie-threadfin."
+        f"Installed {module} stopped; configuration preserved. Start with zombiebox start zombie-{module}."
+    )
+    if module == "mediamtx":
+        print(
+            "Restart zombied after starting MediaMTX to load the relay configuration."
+        )
+
+
+def service_script(module, runtime, release):
+    header = "#!/data/data/com.termux/files/usr/bin/sh\nset -eu\nexec 2>&1\n"
+    if module == "threadfin":
+        (runtime / "threadfin").mkdir(exist_ok=True, mode=0o700)
+        return (
+            header
+            + "export GOMEMLIMIT=128MiB GOMAXPROCS=1\n"
+            + 'exec "$HOME/.zombie/bin/threadfin" -config "$HOME/.zombie/threadfin" -bind 127.0.0.1 -port 34400\n'
+        )
+    config = runtime / "config/mediamtx.yml"
+    if not config.exists():
+        shutil.copy2(release / "mediamtx.yml", config)
+        config.chmod(0o600)
+    (runtime / "config/cast.enabled").touch(mode=0o600)
+    return (
+        header
+        + 'set -a\n. "$HOME/.zombie/config/runtime.env"\nset +a\n'
+        + ': "${ZOMBIE_RELAY_ADMIN_TOKEN:?Core relay key is missing}"\n'
+        + "listen=${ZOMBIE_LISTEN:-0.0.0.0:8090}\n"
+        + "export GOMEMLIMIT=96MiB GOMAXPROCS=1\n"
+        + 'export MTX_AUTHHTTPADDRESS="http://127.0.0.1:${listen##*:}/internal/relay/auth?key=$ZOMBIE_RELAY_ADMIN_TOKEN"\n'
+        + 'export MTX_RTSPADDRESS="${ZOMBIE_RTSP_LISTEN:-0.0.0.0:8554}"\n'
+        + "export MTX_HLSADDRESS=127.0.0.1:8888 MTX_APIADDRESS=127.0.0.1:9997\n"
+        + 'exec "$HOME/.zombie/bin/mediamtx" "$HOME/.zombie/config/mediamtx.yml"\n'
     )
 
 

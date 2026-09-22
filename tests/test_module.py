@@ -115,6 +115,50 @@ class ModuleTests(unittest.TestCase):
             (self.package / "bin/threadfin").read_bytes(),
         )
 
+    def test_mediamtx_preserves_private_config_and_installs_stopped(self):
+        (self.package / "bin/threadfin").rename(self.package / "bin/mediamtx")
+        (self.package / "mediamtx.yml").write_text("packaged config")
+        self.record.update(
+            module="mediamtx",
+            upstreamCommit=modules.MODULES["mediamtx"],
+            sourceArchive=dict(
+                name="zombiebox-mediamtx-android-arm64-sources.tar.gz", sha256="b" * 64
+            ),
+        )
+        self.save()
+        runtime, prefix = self.root / "runtime", self.root / "prefix"
+        (runtime / "bin").mkdir(parents=True)
+        (runtime / "bin/zombied").write_text("core")
+        (runtime / "config").mkdir()
+        config = runtime / "config/mediamtx.yml"
+        config.write_text("existing private config")
+        environment = runtime / "config/runtime.env"
+        environment.write_text(
+            "ZOMBIE_LISTEN=0.0.0.0:8099\nZOMBIE_RELAY_ADMIN_TOKEN=private\n"
+        )
+        with patch.object(modules.subprocess, "run") as run:
+            modules.install(self.package, "mediamtx", "arm64", 24, runtime, prefix)
+            self.assertEqual(run.call_count, 1)
+        service = prefix / "var/service/zombie-mediamtx"
+        self.assertTrue((service / "down").exists())
+        self.assertTrue((runtime / "config/cast.enabled").exists())
+        self.assertEqual(config.read_text(), "existing private config")
+        self.assertIn("ZOMBIE_LISTEN=0.0.0.0:8099", environment.read_text())
+        script = (service / "run").read_text()
+        self.assertIn("${listen##*:}/internal/relay/auth", script)
+        self.assertIn("MTX_HLSADDRESS=127.0.0.1:8888", script)
+        self.assertNotIn("TOKEN=private", script)
+        self.assertFalse((runtime / "threadfin").exists())
+
+    def test_mediamtx_requires_packaged_configuration(self):
+        (self.package / "bin/threadfin").rename(self.package / "bin/mediamtx")
+        self.record.update(
+            module="mediamtx", upstreamCommit=modules.MODULES["mediamtx"]
+        )
+        self.save()
+        with self.assertRaises(ValueError):
+            modules.validate(self.package, "mediamtx", "arm64", 24)
+
     def test_archive_rejects_traversal_links_duplicates_and_corruption(self):
         for names, kind in (
             (["../escape"], tarfile.REGTYPE),

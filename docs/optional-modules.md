@@ -4,10 +4,10 @@ These modules supplement the Edge core. Installing one does not enable accounts,
 start a receiver, or establish Android runtime acceptance. The core continues to
 work with direct M3U/XMLTV without Threadfin.
 
-| Module | Binary packaging at dev.37 | Remaining boundary |
+| Module | Binary packaging at dev.38 | Remaining boundary |
 |---|---|---|
 | Threadfin 1.2.40 | ARMv7/ARM64 Android API24 PIE builder, source/dependency archives, ELF audit and compiler-free installer | Android execution, service/SSDP and workload acceptance deferred |
-| MediaMTX 1.21.1 | Android builder reaches ELF audit; packaging stops on missing upstream dependency notice | `github.com/benburkert/openpgp@v0.0.0-20160410205803-c2471f86866c` has no LICENSE in its source ZIP; no substitute license is invented and no bundle is published |
+| MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; public dev.38 assets not yet published |
 | YouTube / TV receiver | Existing native source installation and pinned Node22 contract | Compiler-free compatible Node/runtime bundle still required |
 | Spotify | Existing native source installation | Android native codec dependency closure and binary bundle |
 | AirPlay / UxPlay | Experimental native source installation | Android GStreamer/OpenSSL/libplist closure and binary bundle |
@@ -60,4 +60,40 @@ linked dependencies, Go standard library and first-party recipe licenses.
 
 Finding a license file is an inventory check, not an automatic legal determination.
 Distribution still requires review of the actual included source/notices. The
-MediaMTX failure above remains visible instead of silently dropping a dependency.
+MediaMTX inline notice is handled by an exact package/source review below.
+
+## MediaMTX installation and inline notice review
+
+With a dev.38 launcher, install the matching ABI archive and start explicitly:
+
+```sh
+zombiebox module --module mediamtx --bundle /path/zombiebox-mediamtx-android-arm64.tar.gz --sha256 EXPECTED_SHA256
+zombiebox start zombie-mediamtx
+zombiebox stop zombied
+zombiebox start zombied
+```
+
+The installer preserves `config/mediamtx.yml` and `runtime.env`, reuses the core's
+private relay key, and installs the module stopped. It enables core relay wiring
+through `cast.enabled`; the running core must be restarted to read that setting.
+The auth callback uses the configured core HTTP port. HLS and management remain
+loopback-only; TCP RTSP defaults to `0.0.0.0:8554` for authorized phone publishing.
+An existing `ZOMBIE_RTSP_LISTEN` override is preserved. Never expose these services
+through public router port forwarding. This does not imply native AirPlay support.
+
+The missing-LICENSE warning was a filename-only scanner limitation. The only
+compiled OpenPGP package is `aes/keywrap`, whose `keywrap.go` and test carry the
+complete Matthew Endsley BSD-2-Clause notice. The review pins the module version,
+linked package set and all three package-file SHA256s. A new version, source change
+or additional linked package fails packaging until reviewed. The notice is copied
+verbatim (removing Go comment markers); cryptographic code is unchanged.
+
+Corresponding sources include only this reviewed package from OpenPGP, its tests
+and notice. Unrelated packages are excluded. `goSum` identifies the original module,
+while `sourceSha256` identifies the explicitly labeled source subset; the archive
+is not misrepresented as the complete Go proxy ZIP. Other dependencies retain their
+original source ZIPs. All emitted dependency notices also accompany the source bundle.
+
+Primary evidence: [pinned keywrap source and notice](https://github.com/benburkert/openpgp/blob/c2471f86866c/aes/keywrap/keywrap.go)
+and [the gosrt import](https://github.com/datarhei/gosrt/blob/a77b40bb4b76b9d1018fa41c6a7fa6ed34af95bf/crypto/crypto.go).
+The original module cache and reference clones are never modified.

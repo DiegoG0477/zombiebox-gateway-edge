@@ -15,6 +15,7 @@ from pathlib import Path
 
 from audit_android import audit
 from release_sources import linked_modules
+from reviewed_notices import collect_reviewed
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULES = {
@@ -37,6 +38,25 @@ def collect_dependencies(binary, source, sources, package, env):
     metadata = subprocess.check_output(
         ["go", "version", "-m", str(binary)], env=env, text=True
     )
+    packages = {}
+    inventory = subprocess.check_output(
+        [
+            "go",
+            "list",
+            "-mod=readonly",
+            "-deps",
+            "-f",
+            "{{if .Module}}{{.Module.Path}} {{.ImportPath}}{{end}}",
+            ".",
+        ],
+        cwd=source,
+        env=env,
+        text=True,
+    )
+    for line in inventory.splitlines():
+        if line.strip():
+            module, imported = line.split()
+            packages.setdefault(module, set()).add(imported)
     entries = []
     for index, (module, version, checksum) in enumerate(linked_modules(metadata)):
         record = json.loads(
@@ -50,7 +70,6 @@ def collect_dependencies(binary, source, sources, package, env):
         if record.get("Error") or record.get("Sum") != checksum:
             raise ValueError("Linked dependency source checksum mismatch")
         name = f"module-{index:03d}"
-        shutil.copy2(record["Zip"], sources / (name + ".zip"))
         notices = []
         with zipfile.ZipFile(record["Zip"]) as module_zip:
             for entry in module_zip.infolist():
@@ -67,17 +86,33 @@ def collect_dependencies(binary, source, sources, package, env):
                 notice = f"licenses/{name}-{len(notices)}.txt"
                 (package / notice).write_bytes(module_zip.read(entry))
                 notices.append(notice)
-        if not notices:
-            raise ValueError(
-                "Linked dependency needs an explicit notice review: " + module
+        review = {}
+        if notices:
+            source_name = name + ".zip"
+            shutil.copy2(record["Zip"], sources / source_name)
+        else:
+            source_name = name + "-reviewed-packages.zip"
+            notice = f"licenses/{name}-inline.txt"
+            review = collect_reviewed(
+                module,
+                version,
+                packages.get(module, set()),
+                record["Zip"],
+                sources / source_name,
+                package / notice,
             )
+            notices.append(notice)
         entries.append(
             dict(
                 module=module,
                 version=version,
                 goSum=checksum,
-                source=name + ".zip",
+                source=source_name,
+                sourceSha256=hashlib.sha256(
+                    (sources / source_name).read_bytes()
+                ).hexdigest(),
                 notices=notices,
+                **review,
             )
         )
     return entries
@@ -200,6 +235,10 @@ def build(args, core):
         shutil.copy2(
             ROOT / "scripts/release_sources.py", sources / "release_sources.py"
         )
+        shutil.copy2(
+            ROOT / "scripts/reviewed_notices.py", sources / "reviewed_notices.py"
+        )
+        shutil.copytree(package / "licenses", sources / "licenses")
         shutil.copy2(ROOT / "scripts/install-binary.py", sources / "install-binary.py")
         for name in ("LICENSE", "NOTICE"):
             shutil.copy2(ROOT / name, sources / name)
@@ -215,7 +254,8 @@ def build(args, core):
         ).hexdigest()
         (sources / "sources.json").write_text(json.dumps(record, indent=2) + "\n")
         (sources / "BUILDING.md").write_text(
-            "Extract upstream-patched.tar.gz; use Go1.26.0 with GOOS=android, CGO_ENABLED=1 and the NDK28.2.13676358 API24 compiler. Build with -buildmode=pie -trimpath -ldflags='-s -w -checklinkname=0'. Select GOARCH=arm64 or GOARCH=arm GOARM=7. Dependency ZIP sources and notices are included. No signing key is needed.\n"
+            "Extract upstream-patched.tar.gz; use Go1.26.0 with GOOS=android, CGO_ENABLED=1 and the NDK28.2.13676358 API24 compiler. Build with -buildmode=pie -trimpath -ldflags='-s -w -checklinkname=0'. Select GOARCH=arm64 or GOARCH=arm GOARM=7. Dependency ZIP sources and notices are included. No signing key is needed.\n\n"
+            "The reviewed-packages ZIP is a source subset, not a Go proxy ZIP: goSum identifies the verified original module while sourceSha256 identifies this subset. Only aes/keywrap from benburkert/openpgp is compiled. Its exact source, tests and inline BSD notice are supplied; unrelated OpenPGP packages are excluded. A normal rebuild downloads the original module using upstream go.sum. For an offline rebuild, populate a local module directory with the supplied keywrap sources and map it using a local go.mod replacement; record that local replacement separately from the original binary provenance.\n"
         )
         source_asset = args.output / (stem + "-sources.tar.gz")
         archive(sources, source_asset)

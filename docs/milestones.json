@@ -29,7 +29,9 @@
     "Dev.34: Consumes dev.34 core pairing and remote-text implementation; native Bionic packaging is unchanged. Optional worker artifacts, Android runtime acceptance and publication remain open.",
     "Dev.35: Pins the same dev.35 queue/adaptation/listening implementation with a real core remote. No Linux binary or fork; Bionic runtime and optional prebuilt modules remain unverified.",
     "Dev.36: Release bundles now derive corresponding module sources from each ELF and include first-party/toolchain source archives. Optional module binaries and Android execution remain separate.",
-    "Dev.37: Compiler-free Threadfin Android module installer/builder and separated module diagnostics. MediaMTX dependency notice and other optional binary modules remain open; no Android execution claim."
+    "Dev.37: Compiler-free Threadfin Android module installer/builder and separated module diagnostics. MediaMTX dependency notice and other optional binary modules remain open; no Android execution claim.",
+    "Dev.38: MediaMTX compiler-free Android modules, pinned inline BSD notice review and source subset inventory. Other optional modules, Full distribution and physical acceptance remain open.",
+    "Dev.38: existing repository transferred to ZombieBox-tv with preserved identity/history/releases/milestones. No product completion or physical acceptance is implied."
   ],
   "milestones": [
     {
@@ -38,7 +40,7 @@
       "status": "in_progress",
       "completedAt": null,
       "remoteId": 1,
-      "remoteURL": "https://github.com/DiegoG0477/zombiebox-gateway-edge/milestone/1"
+      "remoteURL": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge/milestone/1"
     },
     {
       "id": "M11",
@@ -46,9 +48,9 @@
       "status": "planned",
       "completedAt": null,
       "remoteId": 2,
-      "remoteURL": "https://github.com/DiegoG0477/zombiebox-gateway-edge/milestone/2"
+      "remoteURL": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.37",
-  "remote": "https://github.com/DiegoG0477/zombiebox-gateway-edge"
+  "developmentCheckpoint": "v0.1.0-dev.38",
+  "remote": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge"
 }

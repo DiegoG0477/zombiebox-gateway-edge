@@ -146,3 +146,7 @@ Product milestone completion still requires its recorded acceptance gates.
 ## dev.37 implementation checkpoint
 
 Compiler-free Threadfin Android module installer/builder and separated module diagnostics. MediaMTX dependency notice and other optional binary modules remain open; no Android execution claim.
+
+## dev.38 implementation checkpoint
+
+Dev.38: MediaMTX compiler-free Android modules, pinned inline BSD notice review and source subset inventory. Other optional modules, Full distribution and physical acceptance remain open.
