@@ -116,3 +116,8 @@ Pins the same 1080p negotiation core as Full. The preserved dev.26 Android bundl
 
 Pins the same audio-only Cast core without a fork. Existing dev.26 Bionic archives retain their provenance; optional MediaMTX packaging and native runtime acceptance remain open.
 Product milestones and physical acceptance remain open.
+
+## dev.30 increment
+
+Pins the shared phone-media core with bounded temporary storage beside SQLite and existing FFmpeg tools. Existing dev.26 Bionic artifacts are unchanged; no new Android runtime claim.
+Product milestones and deferred physical gates remain open.
