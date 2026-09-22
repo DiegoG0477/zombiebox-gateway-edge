@@ -10,28 +10,27 @@ Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
 ## Installation
 
-### Prebuilt Android bundle (local candidates built; publication pending)
+### Prebuilt Android bundle (experimental dev.36)
 
 Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
 userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
 No Docker, root, Go or C compiler is required by the binary installer. It installs
 Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
 
-Once release assets exist, a downloaded installer accepts an exact release:
+Download the version-pinned installer and review it, then install the core bundle:
 
 ```sh
-bash install.sh --repository OWNER/ACTUAL_EDGE_REPO --version vX.Y.Z
+bash install.sh --repository DiegoG0477/zombiebox-gateway-edge --version v0.1.0-dev.36
 ```
 
-A future README can expose the same operation as a version-pinned one-liner:
+Equivalent one-line installation from the pinned release:
 
 ```sh
-# Template only: replace with the actual published repository and release.
-curl -fsSL https://raw.githubusercontent.com/OWNER/ACTUAL_EDGE_REPO/vX.Y.Z/install.sh | bash -s -- --repository OWNER/ACTUAL_EDGE_REPO --version vX.Y.Z
+curl -fsSL https://raw.githubusercontent.com/DiegoG0477/zombiebox-gateway-edge/v0.1.0-dev.36/install.sh | bash -s -- --repository DiegoG0477/zombiebox-gateway-edge --version v0.1.0-dev.36
 ```
 
-There is no live download URL yet. For a locally transferred build, supply its
-independently checked SHA256:
+The [experimental release](https://github.com/DiegoG0477/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.36) pairs each ABI archive with its corresponding-source archive and checksums.
+For a locally transferred build, supply its independently checked SHA256:
 
 ```sh
 bash install.sh --bundle /path/zombiebox-gateway-android-arm64.tar.gz --sha256 SHA256_FROM_BUILD
@@ -52,7 +51,7 @@ zombiebox doctor
 zombiebox stop
 zombiebox boot-enable     # optional Termux:Boot hook
 zombiebox boot-disable
-zombiebox update --repository OWNER/ACTUAL_EDGE_REPO --version vX.Y.Z
+zombiebox update --repository DiegoG0477/zombiebox-gateway-edge --version v0.1.0-dev.36
 zombiebox uninstall       # removes services, retains private data
 ```
 

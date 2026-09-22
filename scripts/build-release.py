@@ -13,6 +13,7 @@ import tempfile
 from pathlib import Path
 
 from audit_android import audit
+from release_sources import collect
 
 ROOT = Path(__file__).resolve().parents[1]
 NDK_VERSION = "28.2.13676358"
@@ -74,6 +75,9 @@ def build(core, ndk, output, version, arch):
             core / "docs/licenses/go-qrcode-LICENSE",
             package / "licenses/go-qrcode-LICENSE",
         )
+        shutil.copy2(
+            core / "docs/licenses/DIAL-LICENSE", package / "licenses/DIAL-LICENSE"
+        )
         # The bundled SQLite driver is compiled into this executable.
         go_cache = Path(
             subprocess.check_output(
@@ -110,6 +114,13 @@ def build(core, ndk, output, version, arch):
             ],
             check=True,
         )
+        source_archive = collect(
+            package / "bin/zombied",
+            core,
+            ROOT,
+            env,
+            output / f"zombiebox-gateway-android-{arch}-sources.tar.gz",
+        )
         manifest = {
             "schemaVersion": 1,
             "version": version,
@@ -130,6 +141,8 @@ def build(core, ndk, output, version, arch):
                 ).strip()
             ),
             "publicationReady": False,
+            "sourceArchive": source_archive,
+            "distributionScope": "core_and_probes_only",
             "binaryAudit": binary_audit,
             "files": {
                 str(path.relative_to(package)): hashlib.sha256(
