@@ -15,6 +15,20 @@ Keep a separate validation track for hardware/account/latency/memory evidence.
 Use development checkpoint tags until complete exit gates are evidenced. Hosted
 issues/milestones can be attached to the shared GitHub Project once remotes exist.
 
+## dev.50 licensed Spotify module candidate
+
+This checkout pins Core dev.47's licensed go-librespot source preparation. Its
+Android ARM64 and ARMv7 Spotify module candidates build with exact SHA-locked
+Termux FLAC/MPG123/Ogg headers, MIT Vorbis decoder modules, worker binaries and
+matching source/notice archives. Both candidates pass host ELF/API24, transitive
+native-library closure and Go dependency-notice checks. The installer requires an
+exact matching Core, installs fixed native package versions, checks both binaries
+before stopping an existing service, preserves private state and leaves Spotify
+disabled. Host tests cover the license guard and service transitions. Public
+assets must be rebuilt from a clean commit alongside Core/Node/AirPlay for one
+coherent Edge dependency set. Android account playback and performance remain
+unverified; no product or physical gate closes.
+
 ## dev.49 public module status
 
 [Dev.47](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.47)

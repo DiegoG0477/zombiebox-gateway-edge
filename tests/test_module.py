@@ -231,6 +231,89 @@ class ModuleTests(unittest.TestCase):
             (self.package / "bin/airplay").read_bytes(),
         )
 
+    def test_spotify_requires_licensed_decoder_and_preserves_private_configuration(
+        self,
+    ):
+        (self.package / "bin/threadfin").rename(self.package / "bin/spotify")
+        (self.package / "bin/zombie-worker").write_bytes(
+            (self.package / "bin/spotify").read_bytes()
+        )
+        for name in (
+            "libflac-Xiph",
+            "libflac-LGPL",
+            "libflac-GPL",
+            "libogg-copyright",
+            "libmpg123-LGPL",
+        ):
+            (self.package / "licenses" / name).write_text("notice")
+        self.record.update(
+            module="spotify",
+            upstreamCommit=modules.MODULES["spotify"],
+            coreCommit="c" * 40,
+            vorbisPatch="licensed-vorbis.patch",
+            externalPackages=list(modules.SPOTIFY_PACKAGE_VERSIONS),
+            externalPackageVersions=modules.SPOTIFY_PACKAGE_VERSIONS,
+            dependencies=[
+                {"module": "github.com/jfreymuth/oggvorbis", "version": "v1.0.5"},
+                {"module": "github.com/jfreymuth/vorbis", "version": "v1.0.2"},
+            ],
+            sourceArchive=dict(
+                name="zombiebox-spotify-android-arm64-sources.tar.gz",
+                sha256="d" * 64,
+            ),
+        )
+        self.save()
+        runtime, prefix = self.root / "runtime", self.root / "prefix"
+        (runtime / "bin").mkdir(parents=True)
+        (runtime / "bin/zombied").write_text("core")
+        (runtime / "current").mkdir()
+        (runtime / "current/release.json").write_text(
+            json.dumps({"coreCommit": "e" * 40})
+        )
+        with (
+            patch.object(modules.subprocess, "run") as run,
+            self.assertRaisesRegex(ValueError, "matching Edge core"),
+        ):
+            modules.install(self.package, "spotify", "arm64", 24, runtime, prefix)
+        run.assert_not_called()
+        self.record["dependencies"].append(
+            {"module": "github.com/xlab/vorbis-go", "version": "unlicensed"}
+        )
+        self.save()
+        with self.assertRaisesRegex(ValueError, "reviewed decoder"):
+            modules.validate(self.package, "spotify", "arm64", 24)
+        self.record["dependencies"].pop()
+        self.save()
+        (runtime / "current/release.json").write_text(
+            json.dumps({"coreCommit": "c" * 40})
+        )
+        (runtime / "config").mkdir()
+        (runtime / "config/providers.json").write_text("{}")
+        state = runtime / "spotify"
+        state.mkdir()
+        (state / "config.yml").write_text("private account fixture")
+        private = runtime / "config/spotify-worker.json"
+        private.write_text('{"token":"existing-secret"}')
+        with patch.object(modules.subprocess, "run") as run:
+            modules.install(self.package, "spotify", "arm64", 24, runtime, prefix)
+        self.assertEqual(run.call_count, 3)  # Exact Termux packages and two helps.
+        self.assertEqual(
+            run.call_args_list[0].args[0][0:3], ["apt-get", "install", "-y"]
+        )
+        self.assertEqual(private.read_text(), '{"token":"existing-secret"}')
+        self.assertEqual((state / "config.yml").read_text(), "private account fixture")
+        self.assertTrue((prefix / "var/service/zombie-spotify/down").exists())
+        self.assertEqual(
+            json.loads((runtime / "config/providers.json").read_text())["spotify"][
+                "enabled"
+            ],
+            False,
+        )
+        self.assertEqual(
+            (runtime / "bin/go-librespot").read_bytes(),
+            (self.package / "bin/spotify").read_bytes(),
+        )
+
     def test_archive_rejects_traversal_links_duplicates_and_corruption(self):
         for names, kind in (
             (["../escape"], tarfile.REGTYPE),

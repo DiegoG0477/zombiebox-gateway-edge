@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
+import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -21,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MODULES = {
     "mediamtx": ("048255986f7e04b859b4c4efe651448ec785ecd4", "1.21.1"),
     "threadfin": ("6b9c0ccf16164eb362af0a44660228267734c5aa", "1.2.40"),
+    "spotify": ("57d7278d94a9233060c2a6238f5926ffd1e72de4", "patched-0.1.0"),
 }
 
 
@@ -34,7 +36,7 @@ def archive(folder, output):
     )
 
 
-def collect_dependencies(binary, source, sources, package, env):
+def collect_dependencies(binary, source, sources, package, env, target="."):
     metadata = subprocess.check_output(
         ["go", "version", "-m", str(binary)], env=env, text=True
     )
@@ -47,7 +49,7 @@ def collect_dependencies(binary, source, sources, package, env):
             "-deps",
             "-f",
             "{{if .Module}}{{.Module.Path}} {{.ImportPath}}{{end}}",
-            ".",
+            target,
         ],
         cwd=source,
         env=env,
@@ -118,9 +120,34 @@ def collect_dependencies(binary, source, sources, package, env):
     return entries
 
 
+def termux_spotify_libraries(arch, directory):
+    lock = json.loads((ROOT / "packaging/spotify-termux-libs.json").read_text())
+    prefix = directory / "data/data/com.termux/files/usr"
+    directory.mkdir()
+    for name, (version, path, checksum) in lock[
+        "aarch64" if arch == "arm64" else "arm"
+    ].items():
+        if not path.startswith("pool/main/") or ".." in Path(path).parts:
+            raise ValueError("Untrusted Termux package path")
+        with urllib.request.urlopen(lock["repository"] + path, timeout=40) as response:
+            content = response.read(12 << 20)
+            if response.read(1):
+                raise ValueError("Oversized Termux build package")
+        if hashlib.sha256(content).hexdigest() != checksum:
+            raise ValueError(f"Termux package changed: {name} {version}")
+        archive_path = directory / (name + ".deb")
+        archive_path.write_bytes(content)
+        payload = subprocess.check_output(["ar", "p", str(archive_path), "data.tar.xz"])
+        with tarfile.open(fileobj=io.BytesIO(payload), mode="r:xz") as source_tar:
+            source_tar.extractall(directory, filter="data")
+        archive_path.unlink()
+    return prefix
+
+
 def build(args, core):
     commit, version = MODULES[args.module]
-    upstream = core / "third_party/sources" / args.module
+    upstream_name = "go-librespot" if args.module == "spotify" else args.module
+    upstream = core / "third_party/sources" / upstream_name
     actual = subprocess.check_output(
         ["git", "-C", str(upstream), "rev-parse", "HEAD"], text=True
     ).strip()
@@ -135,7 +162,7 @@ def build(args, core):
     compiler = ndk / "toolchains/llvm/prebuilt/linux-x86_64/bin" / (triple + "24-clang")
     env = {
         **os.environ,
-        "GOTOOLCHAIN": "go1.26.0",
+        "GOTOOLCHAIN": "go1.25.6" if args.module == "spotify" else "go1.26.0",
         "GOOS": "android",
         "GOARCH": "arm64" if args.arch == "arm64" else "arm",
         "GOARM": "7",
@@ -153,13 +180,34 @@ def build(args, core):
     with tempfile.TemporaryDirectory(prefix="zombie-edge-module-") as temporary:
         root = Path(temporary)
         source, package, sources = root / "upstream", root / "package", root / "sources"
-        for path in (source, package / "bin", package / "licenses", sources):
+        for path in (package / "bin", package / "licenses", sources):
             path.mkdir(parents=True)
-        exported = subprocess.check_output(
-            ["git", "-C", str(upstream), "archive", commit]
-        )
-        with tarfile.open(fileobj=io.BytesIO(exported)) as source_tar:
-            source_tar.extractall(source, filter="data")
+        if args.module == "spotify":
+            subprocess.run(
+                [
+                    "python3",
+                    str(core / "scripts/prepare-spotify-source.py"),
+                    "--source",
+                    str(upstream),
+                    "--output",
+                    str(source),
+                ],
+                check=True,
+            )
+            sysroot = root / "sysroot"
+            prefix = termux_spotify_libraries(args.arch, sysroot)
+            env.update(
+                PKG_CONFIG_LIBDIR=str(prefix / "lib/pkgconfig"),
+                PKG_CONFIG_SYSROOT_DIR=str(sysroot),
+                GOCACHE=str(root / "go-cache"),
+            )
+        else:
+            source.mkdir()
+            exported = subprocess.check_output(
+                ["git", "-C", str(upstream), "archive", commit]
+            )
+            with tarfile.open(fileobj=io.BytesIO(exported)) as source_tar:
+                source_tar.extractall(source, filter="data")
         if args.module == "mediamtx":
             subprocess.run(
                 ["git", "apply", str(core / "wrappers/mediamtx/android.patch")],
@@ -182,6 +230,7 @@ def build(args, core):
                 entry.read_text().replace(old, 'Repo: "Threadfin", Update: false')
             )
         binary = package / "bin" / args.module
+        target = "./cmd/daemon" if args.module == "spotify" else "."
         subprocess.run(
             [
                 "go",
@@ -194,13 +243,61 @@ def build(args, core):
                 "-ldflags=-s -w -checklinkname=0",
                 "-o",
                 str(binary),
-                ".",
+                target,
             ],
             cwd=source,
             env=env,
             check=True,
         )
-        evidence = audit(binary, ndk, args.arch)
+        external = None
+        if args.module == "spotify":
+            external = {
+                name: prefix / "lib" / name
+                for name in ("libFLAC.so", "libmpg123.so", "libogg.so")
+            }
+        evidence = audit(binary, ndk, args.arch, external)
+        if args.module == "spotify":
+            linked = subprocess.check_output(
+                ["go", "version", "-m", str(binary)], env=env, text=True
+            )
+            if "github.com/xlab/vorbis-go" in linked or not all(
+                name in linked
+                for name in (
+                    "github.com/jfreymuth/oggvorbis",
+                    "github.com/jfreymuth/vorbis",
+                )
+            ):
+                raise ValueError(
+                    "Spotify binary does not link the reviewed Vorbis modules"
+                )
+            worker_env = {
+                **env,
+                "CGO_ENABLED": "0" if args.arch == "arm64" else "1",
+            }
+            worker = package / "bin/zombie-worker"
+            subprocess.run(
+                [
+                    "go",
+                    "build",
+                    "-p=2",
+                    "-trimpath",
+                    "-buildvcs=false",
+                    "-buildmode=pie",
+                    "-ldflags=-s -w",
+                    "-o",
+                    str(worker),
+                    "./cmd/zombie-worker",
+                ],
+                cwd=core / "gateway",
+                env=worker_env,
+                check=True,
+            )
+            worker_audit = audit(worker, ndk, args.arch, allow_no_libraries=True)
+            worker_modules = subprocess.check_output(
+                ["go", "version", "-m", str(worker)], env=worker_env, text=True
+            )
+            if any(line.split()[:1] == ["dep"] for line in worker_modules.splitlines()):
+                raise ValueError("Spotify worker gained uncatalogued Go dependencies")
         shutil.copy2(source / "LICENSE", package / "licenses/upstream-LICENSE")
         shutil.copy2(ndk / "NOTICE", package / "licenses/ndk-NOTICE")
         shutil.copy2(
@@ -210,8 +307,38 @@ def build(args, core):
             subprocess.check_output(["go", "env", "GOROOT"], env=env, text=True).strip()
         )
         shutil.copy2(go_root / "LICENSE", package / "licenses/go-LICENSE")
-        dependencies = collect_dependencies(binary, source, sources, package, env)
+        if args.module == "spotify":
+            for name, origin in (
+                ("libflac-Xiph", prefix / "share/doc/libflac/COPYING.Xiph"),
+                ("libflac-LGPL", prefix / "share/doc/libflac/COPYING.LGPL"),
+                ("libflac-GPL", prefix / "share/doc/libflac/COPYING.GPL"),
+                ("libogg-copyright", prefix / "share/doc/libogg/copyright"),
+                ("libmpg123-LGPL", prefix / "share/doc/libflac/COPYING.LGPL"),
+            ):
+                shutil.copy2(origin, package / "licenses" / name)
+        dependencies = collect_dependencies(
+            binary, source, sources, package, env, target
+        )
         archive(source, sources / "upstream-patched.tar.gz")
+        if args.module == "spotify":
+            with (sources / "gateway-core.tar").open("wb") as output:
+                subprocess.run(
+                    ["git", "-C", str(core), "archive", "HEAD"],
+                    stdout=output,
+                    check=True,
+                )
+            shutil.copy2(
+                core / "wrappers/spotify/patches/licensed-vorbis.patch",
+                sources / "licensed-vorbis.patch",
+            )
+            shutil.copy2(
+                core / "scripts/prepare-spotify-source.py",
+                sources / "prepare-spotify-source.py",
+            )
+            shutil.copy2(
+                ROOT / "packaging/spotify-termux-libs.json",
+                sources / "spotify-termux-libs.json",
+            )
         with tarfile.open(sources / "go-standard-library.tar.gz", "x:gz") as target:
             for name in ("src", "LICENSE", "PATENTS", "VERSION"):
                 target.add(go_root / name, arcname="go/" + name)
@@ -223,12 +350,25 @@ def build(args, core):
             platform="android",
             architecture=args.arch,
             minApi=24,
-            go="1.26.0",
+            go="1.25.6" if args.module == "spotify" else "1.26.0",
             ndk="28.2.13676358",
             binaryAudit=evidence,
             dependencies=dependencies,
             runtimeVerified=False,
         )
+        if args.module == "spotify":
+            spotify_lock = json.loads(
+                (ROOT / "packaging/spotify-termux-libs.json").read_text()
+            )
+            package_arch = "aarch64" if args.arch == "arm64" else "arm"
+            record.update(
+                workerAudit=worker_audit,
+                externalPackages=["libflac", "libmpg123", "libogg"],
+                externalPackageVersions={
+                    name: entry[0] for name, entry in spotify_lock[package_arch].items()
+                },
+                vorbisPatch="licensed-vorbis.patch",
+            )
         (sources / "sources.json").write_text(json.dumps(record, indent=2) + "\n")
         shutil.copy2(Path(__file__), sources / "build-module.py")
         shutil.copy2(ROOT / "scripts/audit_android.py", sources / "audit_android.py")
@@ -253,10 +393,15 @@ def build(args, core):
             Path(__file__).read_bytes()
         ).hexdigest()
         (sources / "sources.json").write_text(json.dumps(record, indent=2) + "\n")
-        (sources / "BUILDING.md").write_text(
-            "Extract upstream-patched.tar.gz; use Go1.26.0 with GOOS=android, CGO_ENABLED=1 and the NDK28.2.13676358 API24 compiler. Build with -buildmode=pie -trimpath -ldflags='-s -w -checklinkname=0'. Select GOARCH=arm64 or GOARCH=arm GOARM=7. Dependency ZIP sources and notices are included. No signing key is needed.\n\n"
-            "The reviewed-packages ZIP is a source subset, not a Go proxy ZIP: goSum identifies the verified original module while sourceSha256 identifies this subset. Only aes/keywrap from benburkert/openpgp is compiled. Its exact source, tests and inline BSD notice are supplied; unrelated OpenPGP packages are excluded. A normal rebuild downloads the original module using upstream go.sum. For an offline rebuild, populate a local module directory with the supplied keywrap sources and map it using a local go.mod replacement; record that local replacement separately from the original binary provenance.\n"
-        )
+        if args.module == "spotify":
+            (sources / "BUILDING.md").write_text(
+                "Extract upstream-patched.tar.gz. With Go1.25.6, NDK28.2.13676358 API24 Clang and the exact SHA-locked Termux libflac/libmpg123/libogg headers and libraries in spotify-termux-libs.json, build ./cmd/daemon with GOOS=android, GOARCH=arm64 or arm GOARM=7, CGO_ENABLED=1, -buildmode=pie, -trimpath and -ldflags='-s -w -checklinkname=0'. Set PKG_CONFIG_LIBDIR to the extracted package lib/pkgconfig directory and PKG_CONFIG_SYSROOT_DIR to its extraction root. Build ./cmd/zombie-worker from gateway-core.tar with the same Go/NDK target. The matching module ZIPs, notices, patch and Go standard-library source are included. Do not substitute xlab/vorbis-go. No signing key is needed.\n"
+            )
+        else:
+            (sources / "BUILDING.md").write_text(
+                "Extract upstream-patched.tar.gz; use Go1.26.0 with GOOS=android, CGO_ENABLED=1 and the NDK28.2.13676358 API24 compiler. Build with -buildmode=pie -trimpath -ldflags='-s -w -checklinkname=0'. Select GOARCH=arm64 or GOARCH=arm GOARM=7. Dependency ZIP sources and notices are included. No signing key is needed.\n\n"
+                "The reviewed-packages ZIP is a source subset, not a Go proxy ZIP: goSum identifies the verified original module while sourceSha256 identifies this subset. Only aes/keywrap from benburkert/openpgp is compiled. Its exact source, tests and inline BSD notice are supplied; unrelated OpenPGP packages are excluded. A normal rebuild downloads the original module using upstream go.sum. For an offline rebuild, populate a local module directory with the supplied keywrap sources and map it using a local go.mod replacement; record that local replacement separately from the original binary provenance.\n"
+            )
         source_asset = args.output / (stem + "-sources.tar.gz")
         archive(sources, source_asset)
         record["sourceArchive"] = dict(

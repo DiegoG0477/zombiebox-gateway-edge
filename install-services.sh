@@ -24,8 +24,8 @@ for name in "$@"; do
             source_name=go-librespot
             commit=57d7278d94a9233060c2a6238f5926ffd1e72de4
             command -v pkg-config >/dev/null
-            pkg-config --exists ogg vorbis flac libmpg123 || {
-                echo 'Install native libogg, libvorbis, libflac, mpg123 and pkg-config development files.' >&2
+            pkg-config --exists flac libmpg123 || {
+                echo 'Install native libogg, libflac, mpg123 and pkg-config development files.' >&2
                 exit 1
             }
             ;;
@@ -45,15 +45,21 @@ for name in "$@"; do
     }
     build=$(mktemp -d "$runtime/cache/$source_name.XXXXXX")
     trap 'rm -rf "$build"' EXIT
-    git -C "$upstream" archive HEAD | tar -x -C "$build"
+    source_dir="$build/source"
     if [[ $name == spotify ]]; then
-        (cd "$build" && CGO_ENABLED=1 GOTOOLCHAIN=local GOMAXPROCS=2 go build -mod=readonly -p 2 -trimpath -o "$runtime/bin/go-librespot" ./cmd/daemon)
+        python3 "$repo/scripts/prepare-spotify-source.py" --source "$upstream" --output "$source_dir"
+    else
+        mkdir "$source_dir"
+        git -C "$upstream" archive HEAD | tar -x -C "$source_dir"
+    fi
+    if [[ $name == spotify ]]; then
+        (cd "$source_dir" && CGO_ENABLED=1 GOTOOLCHAIN=local GOMAXPROCS=2 go build -mod=readonly -p 2 -trimpath -o "$runtime/bin/go-librespot" ./cmd/daemon)
         (cd "$repo/gateway" && CGO_ENABLED=0 GOTOOLCHAIN=local GOMAXPROCS=2 go build -p 2 -trimpath -o "$runtime/bin/zombie-worker" ./cmd/zombie-worker)
     else
-        (cd "$build" && CGO_ENABLED=0 GOTOOLCHAIN=local GOMAXPROCS=2 go build -mod=readonly -p 2 -trimpath -o "$runtime/bin/threadfin" .)
+        (cd "$source_dir" && CGO_ENABLED=0 GOTOOLCHAIN=local GOMAXPROCS=2 go build -mod=readonly -p 2 -trimpath -o "$runtime/bin/threadfin" .)
     fi
     mkdir -p "$runtime/licenses/$source_name" "$runtime/$name"
-    cp "$build/LICENSE" "$runtime/licenses/$source_name/LICENSE"
+    cp "$source_dir/LICENSE" "$runtime/licenses/$source_name/LICENSE"
     printf '%s\n' "$commit" >"$runtime/licenses/$source_name/COMMIT"
     rm -rf "$build"
     trap - EXIT

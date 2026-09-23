@@ -20,6 +20,12 @@ MODULES = {
     "threadfin": "6b9c0ccf16164eb362af0a44660228267734c5aa",
     "mediamtx": "048255986f7e04b859b4c4efe651448ec785ecd4",
     "airplay": "57ea83411d5f7e0b38c5841987439340543f025c",
+    "spotify": "57d7278d94a9233060c2a6238f5926ffd1e72de4",
+}
+SPOTIFY_PACKAGE_VERSIONS = {
+    "libflac": "1.5.0-1",
+    "libmpg123": "1.33.7",
+    "libogg": "1.3.6-1",
 }
 
 
@@ -123,6 +129,30 @@ def validate(package, module, arch, api):
                 "licenses/playfair-LICENSE",
             }
         )
+    if module == "spotify":
+        required.update(
+            {
+                "bin/zombie-worker",
+                "licenses/libflac-Xiph",
+                "licenses/libflac-LGPL",
+                "licenses/libflac-GPL",
+                "licenses/libogg-copyright",
+                "licenses/libmpg123-LGPL",
+            }
+        )
+        modules = {
+            entry.get("module"): entry.get("version")
+            for entry in record.get("dependencies", [])
+        }
+        if (
+            record.get("vorbisPatch") != "licensed-vorbis.patch"
+            or record.get("externalPackages") != list(SPOTIFY_PACKAGE_VERSIONS)
+            or record.get("externalPackageVersions") != SPOTIFY_PACKAGE_VERSIONS
+            or modules.get("github.com/jfreymuth/oggvorbis") != "v1.0.5"
+            or modules.get("github.com/jfreymuth/vorbis") != "v1.0.2"
+            or "github.com/xlab/vorbis-go" in modules
+        ):
+            raise ValueError("Spotify package is not the reviewed decoder build")
     if not required.issubset(files) or actual != set(files):
         raise ValueError("Incomplete or unexpected module files")
     for name, checksum in files.items():
@@ -148,7 +178,7 @@ def validate(package, module, arch, api):
     spec.loader.exec_module(installer)
     if not installer.android_elf((package / "bin" / module).read_bytes(), arch):
         raise ValueError("Expected an Android PIE executable for this ABI")
-    if module == "airplay" and not installer.android_elf(
+    if module in {"airplay", "spotify"} and not installer.android_elf(
         (package / "bin/zombie-worker").read_bytes(), arch
     ):
         raise ValueError("Expected an Android worker for this ABI")
@@ -159,14 +189,15 @@ def install(package, module, arch, api, runtime, prefix):
     record = validate(package, module, arch, api)
     if not (runtime / "bin/zombied").is_file():
         raise ValueError("Install the Edge core first")
-    if module == "airplay":
+    if module in {"airplay", "spotify"}:
         core = json.loads((runtime / "current/release.json").read_text())
         if record.get("coreCommit") != core.get("coreCommit"):
-            raise ValueError("AirPlay worker requires its exact matching Edge core")
-        old_uxplay = runtime / "bin/uxplay"
-        if old_uxplay.exists() and not old_uxplay.is_symlink():
+            raise ValueError(f"{module} worker requires its exact matching Edge core")
+        alias = "uxplay" if module == "airplay" else "go-librespot"
+        old = runtime / "bin" / alias
+        if old.exists() and not old.is_symlink():
             raise ValueError(
-                "Migrate the existing source-built uxplay before installing a binary module"
+                f"Migrate the existing source-built {alias} before installing a binary module"
             )
     if module == "mediamtx" and not (runtime / "config/runtime.env").is_file():
         raise ValueError("Install the core runtime configuration before MediaMTX")
@@ -196,14 +227,28 @@ def install(package, module, arch, api, runtime, prefix):
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
             )
+    if module == "spotify":
+        subprocess.run(
+            [
+                "apt-get",
+                "install",
+                "-y",
+                *(
+                    f"{name}={version}"
+                    for name, version in SPOTIFY_PACKAGE_VERSIONS.items()
+                ),
+            ],
+            check=True,
+            timeout=300,
+        )
     subprocess.run(
-        [str(binary), "-h"],
+        [str(binary), "--help" if module == "spotify" else "-h"],
         check=True,
         timeout=15,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    if module == "airplay":
+    if module in {"airplay", "spotify"}:
         worker = package / "bin/zombie-worker"
         worker.chmod(0o700)
         subprocess.run(
@@ -235,6 +280,11 @@ def install(package, module, arch, api, runtime, prefix):
         uxplay.unlink(missing_ok=True)
         uxplay.symlink_to(directory / "current/bin/airplay")
         uxplay.replace(runtime / "bin/uxplay")
+    if module == "spotify":
+        librespot = runtime / "bin/go-librespot.next"
+        librespot.unlink(missing_ok=True)
+        librespot.symlink_to(directory / "current/bin/spotify")
+        librespot.replace(runtime / "bin/go-librespot")
     (service / "run").write_text(service_script(module, runtime, release))
     (service / "run").chmod(0o700)
     print(
@@ -289,6 +339,54 @@ def service_script(module, runtime, release):
             + 'export PATH="$HOME/.zombie/bin:$PATH" GOMEMLIMIT=128MiB GOMAXPROCS=1\n'
             + 'export GST_REGISTRY="$HOME/.zombie/airplay/gstreamer-registry.bin"\n'
             + 'exec "$HOME/.zombie/modules/airplay/current/bin/zombie-worker" -config "$HOME/.zombie/config/airplay-worker.json"\n'
+        )
+    if module == "spotify":
+        state = runtime / "spotify"
+        state.mkdir(exist_ok=True, mode=0o700)
+        worker = runtime / "config/spotify-worker.json"
+        if not worker.exists():
+            worker.write_text(
+                json.dumps(
+                    {
+                        "mode": "spotify",
+                        "listen": "127.0.0.1:8092",
+                        "token": secrets.token_hex(32),
+                        "stateDir": str(state),
+                    }
+                )
+                + "\n"
+            )
+            worker.chmod(0o600)
+        config = state / "config.yml"
+        if not config.exists():
+            config.write_text(
+                "device_name: Zombie Box Edge\n"
+                "credentials:\n  type: device_auth\n"
+                "zeroconf_enabled: false\n"
+                "audio_backend: pipe\n"
+                f"audio_output_pipe: {state / 'audio.pcm'}\n"
+                "audio_output_pipe_format: s16le\n"
+                "audio_output_pipe_wait_for_reader: true\n"
+                "volume_steps: 100\n"
+                "server:\n  enabled: true\n  address: 127.0.0.1\n  port: 3678\n"
+            )
+            config.chmod(0o600)
+        providers_file = runtime / "config/providers.json"
+        providers = json.loads(providers_file.read_text())
+        if "spotify" not in providers:
+            providers["spotify"] = {
+                "enabled": False,
+                "url": "http://127.0.0.1:8092",
+                "token": json.loads(worker.read_text())["token"],
+            }
+            replacement = providers_file.with_suffix(".next")
+            replacement.write_text(json.dumps(providers, indent=2) + "\n")
+            replacement.chmod(0o600)
+            replacement.replace(providers_file)
+        return (
+            header
+            + 'export PATH="$HOME/.zombie/bin:$PATH" GOMEMLIMIT=128MiB GOMAXPROCS=1\n'
+            + 'exec "$HOME/.zombie/modules/spotify/current/bin/zombie-worker" -config "$HOME/.zombie/config/spotify-worker.json"\n'
         )
     config = runtime / "config/mediamtx.yml"
     if not config.exists():

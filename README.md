@@ -78,8 +78,10 @@ The installer obtains prebuilt Termux Node LTS when absent, validates its versio
 and leaves each provider disabled until configured. Android execution remains an
 acceptance gate. Public ARMv7/ARM64 UxPlay binary modules have matching sources,
 notices and a compiler-free installer; see [optional modules](docs/optional-modules.md).
-Spotify still needs a distributable replacement for a Vorbis binding without an
-explicit license. Modules are
+Spotify's decoder has a [reviewed source patch](https://github.com/ZombieBox-tv/zombiebox-gateway-core/blob/v0.1.0-dev.47/wrappers/spotify/README.md),
+and both Android ABI candidates now build with matching sources and notices.
+A public prebuilt module still needs the coherent Core/Node/AirPlay release set.
+Modules are
 selected explicitly, never silently enabled.
 
 ### Available now: native source installation

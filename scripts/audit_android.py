@@ -56,9 +56,16 @@ def audit(
     stubs = toolchain / "sysroot/usr/lib" / triple / "24"
     exports = set()
     system_needed = needed & system
-    for library, path in external_libraries.items():
-        if library not in needed or not path.is_file():
+    pending = list(needed & set(external_libraries))
+    reviewed = set()
+    while pending:
+        library = pending.pop()
+        if library in reviewed:
+            continue
+        path = external_libraries[library]
+        if not path.is_file():
             raise ValueError(f"Missing reviewed Termux library: {library}")
+        reviewed.add(library)
         dependencies = set(
             re.findall(r"\(NEEDED\).*\[(.*?)\]", readelf(tool, path, "-d"))
         )
@@ -68,13 +75,18 @@ def audit(
             )
         system_needed.update(dependencies & system)
         exports.update(symbols(readelf(tool, path, "--dyn-syms"), False))
+        if verify_external_closure:
+            pending.extend(dependencies & set(external_libraries))
+    if reviewed != set(external_libraries):
+        raise ValueError("Unused reviewed Termux library in dependency inventory")
     for library in system_needed:
         exports.update(symbols(readelf(tool, stubs / library, "--dyn-syms"), False))
     external_imports = (
         set().union(
             *(
                 symbols(readelf(tool, path, "--dyn-syms"), True)
-                for path in external_libraries.values()
+                for library, path in external_libraries.items()
+                if library in reviewed
             )
         )
         if verify_external_closure

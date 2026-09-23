@@ -1,0 +1,37 @@
+{
+  "repository": "https://packages.termux.dev/apt/termux-main/",
+  "aarch64": {
+    "libflac": [
+      "1.5.0-1",
+      "pool/main/libf/libflac/libflac_1.5.0-1_aarch64.deb",
+      "d1d6fcac6fd6d15c36f34464cb01d5e2140e321d8448dfc396cd7eb1536b1f6c"
+    ],
+    "libmpg123": [
+      "1.33.7",
+      "pool/main/libm/libmpg123/libmpg123_1.33.7_aarch64.deb",
+      "883b104faae53820b2e758363300ccf99e28f627a263d766af61ae07b73b07b3"
+    ],
+    "libogg": [
+      "1.3.6-1",
+      "pool/main/libo/libogg/libogg_1.3.6-1_aarch64.deb",
+      "4f1700a532f251ad3600f44f88cd764f1f6b0542d3343391117944b47a92802d"
+    ]
+  },
+  "arm": {
+    "libflac": [
+      "1.5.0-1",
+      "pool/main/libf/libflac/libflac_1.5.0-1_arm.deb",
+      "303943c28e47750a220ca914c5e75d6c7dd087862e85ba1ac55bbe10930a7cd2"
+    ],
+    "libmpg123": [
+      "1.33.7",
+      "pool/main/libm/libmpg123/libmpg123_1.33.7_arm.deb",
+      "65d5445454d2ad167b9b5c6d5946736655fba77b33145274a3d4d1744bef5789"
+    ],
+    "libogg": [
+      "1.3.6-1",
+      "pool/main/libo/libogg/libogg_1.3.6-1_arm.deb",
+      "8f7f1754210f878556040f5f8de5cfe50b1c55c5aa1f6a07aa35276622184999"
+    ]
+  }
+}

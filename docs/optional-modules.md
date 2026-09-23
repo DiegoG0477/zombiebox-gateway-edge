@@ -9,7 +9,7 @@ work with direct M3U/XMLTV without Threadfin.
 | Threadfin 1.2.40 | ARMv7/ARM64 Android API24 PIE builder, source/dependency archives, ELF audit and compiler-free installer | Android execution, service/SSDP and workload acceptance deferred |
 | MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; [public dev.38 assets](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) available |
 | YouTube / TV receiver | [Public dev.47](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.47) portable JS modules, source archives, checksum-gated stopped-service installer and matching Core for both ABIs | Validate Bionic Node, TV Code/DIAL and receiver behavior |
-| Spotify | Existing native source installation; ARM64/ARMv7 cross-build candidates only | Replace the pinned Vorbis binding without an explicit license before binary distribution; then validate Android audio and accounts |
+| Spotify | Licensed pure-Go Vorbis patch, ARM64/ARMv7 Android PIE candidate builder and compiler-free stopped-service installer | Publish a matching Core/Node/AirPlay/Spotify release; validate Android audio, accounts and thermal behavior |
 | AirPlay / UxPlay | [Public dev.48](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.48) ARMv7/ARM64 binaries, sources and compiler-free stopped-service installer | Validate Termux dependency closure, mDNS, PIN and audio/video on Android |
 | Rebrowser | Remote Full only | Local Edge browser is outside the supported baseline |
 
