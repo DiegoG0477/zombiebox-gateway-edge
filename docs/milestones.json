@@ -3,6 +3,7 @@
   "repository": "zombiebox-gateway-edge",
   "productRegistry": "workspace:docs/milestones.json",
   "notes": [
+    "Dev.55: Pins Core dev.51 YouTube account OAuth and receiver lifecycle coverage; documents private native OAuth setup. Published dev.50 ARM bundles remain frozen; Android/Termux operation is unverified.",
     "Dev.54: Pins Core dev.50 IPTV categories. Public dev.50 native bundles remain frozen and do not contain this development checkout; Android operation is unverified.",
     "Dev.53: New source installer persists a private operator code and README documents dev.50 workaround, architecture and provider setup. Published dev.50 binaries remain frozen; Android execution is unverified.",
     "Local component scope; product exit gates remain open. Hosted milestones are open; see remoteURL entries.",

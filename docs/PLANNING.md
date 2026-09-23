@@ -259,3 +259,7 @@ Host package tests pass. Actual Bionic, iOS/AirPlay and device playback remain o
 ## v0.1.0-dev.54 — shared IPTV category pin
 
 Dev.54: Pins Core dev.50 IPTV categories. Public dev.50 native bundles remain frozen and do not contain this development checkout; Android operation is unverified.
+
+## v0.1.0-dev.55 — account/receiver pin
+
+Dev.55: Pins Core dev.51 YouTube account OAuth and receiver lifecycle coverage; documents private native OAuth setup. Published dev.50 ARM bundles remain frozen; Android/Termux operation is unverified.

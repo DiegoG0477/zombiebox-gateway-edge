@@ -161,6 +161,25 @@ created by its installer. Spotify Connect authorization runs from Client
 not YouTube account sign-in. Module installation and process start alone do not
 prove a real account, Apple sender or physical player is compatible.
 
+The newer source Gateway also supports read-only YouTube OAuth account browsing;
+the published dev.50 Edge binaries do not. For a future bundle containing this
+feature, create a Google OAuth client of type **TVs and Limited Input devices**
+with the YouTube Data API enabled. Add the ID (and optional secret if issued) to
+the private `~/.zombie/config/runtime.env` file, then restart the Gateway:
+
+```sh
+printf '\nZOMBIE_YOUTUBE_OAUTH_CLIENT_ID=%s\n' 'YOUR_TV_OAUTH_CLIENT_ID' >> "$HOME/.zombie/config/runtime.env"
+chmod 600 "$HOME/.zombie/config/runtime.env"
+zombiebox stop
+zombiebox start zombied zombie-youtube
+```
+
+The Client's **YouTube → YouTube account** screen shows Google's verification
+URL/code, then Subscriptions and Playlists after consent. TV Code remains a
+separate receiver feature. The Gateway alone stores OAuth tokens in SQLite;
+disconnecting requires the local operator code. This account feature needs the
+optional YouTube catalog worker for channel/playlist navigation.
+
 ### Available now: native source installation
 
 The commands below are the existing developer path and require Go/Clang on the
