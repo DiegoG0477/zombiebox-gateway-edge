@@ -15,6 +15,26 @@ Keep a separate validation track for hardware/account/latency/memory evidence.
 Use development checkpoint tags until complete exit gates are evidenced. Hosted
 issues/milestones can be attached to the shared GitHub Project once remotes exist.
 
+## dev.49 public module status
+
+[Dev.47](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.47)
+publishes matching Core ARM64/ARMv7 and portable YouTube/TV receiver bundles for
+Core dev.46. [Dev.48](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.48)
+publishes both UxPlay/AirPlay ABI bundles with sources and SHA256. Their installer
+checks the exact Core commit, native Termux packages, required RTP plugins and
+both executables before stopping an existing AirPlay service. The service remains
+stopped and disabled until configured. Local build, archive, ELF/API24 and remote
+asset digest checks pass; Android runtime, GStreamer transitive closure, audio/
+video, mDNS and thermal acceptance remain open.
+
+Spotify prebuilt distribution remains open. The selected go-librespot revision
+links `github.com/xlab/vorbis-go`, whose pinned source and repository do not carry
+an explicit license. Cross-compiling both ABIs is insufficient to publish this
+dependency. Replace the binding with a reviewed distributable implementation or
+obtain an explicit upstream license before producing Edge binaries. This also
+needs review for the already-published optional Full Spotify image. No product
+milestone closes from these host and publication checks.
+
 ## dev.11 increment
 
 Pins the same remote/browse core and adaptive YouTube worker. Native Termux/Bionic validation and operation lifecycle remain open.

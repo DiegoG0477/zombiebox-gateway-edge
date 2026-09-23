@@ -4,13 +4,13 @@ These modules supplement the Edge core. Installing one does not enable accounts,
 start a receiver, or establish Android runtime acceptance. The core continues to
 work with direct M3U/XMLTV without Threadfin.
 
-| Module | Binary packaging at dev.38 | Remaining boundary |
+| Module | Published or available packaging | Remaining boundary |
 |---|---|---|
 | Threadfin 1.2.40 | ARMv7/ARM64 Android API24 PIE builder, source/dependency archives, ELF audit and compiler-free installer | Android execution, service/SSDP and workload acceptance deferred |
 | MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; [public dev.38 assets](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) available |
-| YouTube / TV receiver | [Public dev.45](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.45) portable JS modules, source archives, checksum-gated stopped-service installer and matching Core for both ABIs | Validate Bionic Node, TV Code/DIAL and receiver behavior |
-| Spotify | Existing native source installation | Android native codec dependency closure and binary bundle |
-| AirPlay / UxPlay | Android ARMv7/ARM64 build recipe and compiler-free module installer | Publish matching binaries/sources; then validate Termux dependency closure, mDNS, PIN and audio/video on Android |
+| YouTube / TV receiver | [Public dev.47](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.47) portable JS modules, source archives, checksum-gated stopped-service installer and matching Core for both ABIs | Validate Bionic Node, TV Code/DIAL and receiver behavior |
+| Spotify | Existing native source installation; ARM64/ARMv7 cross-build candidates only | Replace the pinned Vorbis binding without an explicit license before binary distribution; then validate Android audio and accounts |
+| AirPlay / UxPlay | [Public dev.48](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.48) ARMv7/ARM64 binaries, sources and compiler-free stopped-service installer | Validate Termux dependency closure, mDNS, PIN and audio/video on Android |
 | Rebrowser | Remote Full only | Local Edge browser is outside the supported baseline |
 
 ## YouTube catalog and TV receiver module candidates
@@ -44,10 +44,10 @@ checks the executable and worker before stopping an existing service, preserves
 PIN/tokens and creates a stopped `zombie-airplay` service. It requires the exact
 Core commit in the installed Edge bundle.
 
-Once published in a matching release, install it with:
+Install [dev.47 Core](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.47) first, then:
 
 ```sh
-zombiebox module --module airplay --version RELEASE_TAG
+zombiebox module --module airplay --version v0.1.0-dev.48
 zombiebox start zombie-airplay
 ```
 

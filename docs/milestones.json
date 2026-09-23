@@ -39,7 +39,8 @@
     "Dev.43: optional doctor --media validates bounded decoded-frame evidence through the shared core without granting receiver/network support. Older binaries remain unavailable/unsupported. Other optional Node/Spotify/AirPlay binary modules and physical gates remain open.",
     "Dev.44: consumes test-only Core dev.44 authenticated HLS alternate-audio coverage. Existing Android bundles and optional module identities remain unchanged; Bionic execution and other optional binary modules remain open.",
     "Dev.45: pins tested Core Node24 wrapper support and adds source-closed portable JS optional module builder/installer with exact-core and checksum gates. Android Node execution, release assets and Spotify/AirPlay native closure remain open.",
-    "Dev.46: public dev.45 Edge release carries matching Android/Bionic Core ARM64/ARMv7 and portable YouTube/TV receiver modules with corresponding sources, 121 npm notice/source receipts and matching remote asset SHA256. Host ELF/archive/install checks pass; native Termux execution and Spotify/AirPlay modules remain open."
+    "Dev.46: public dev.45 Edge release carries matching Android/Bionic Core ARM64/ARMv7 and portable YouTube/TV receiver modules with corresponding sources, 121 npm notice/source receipts and matching remote asset SHA256. Host ELF/archive/install checks pass; native Termux execution and Spotify/AirPlay modules remain open.",
+    "Dev.49: public dev.47 Core/YouTube/TV receiver and dev.48 AirPlay ARM64/ARMv7 bundles have verified host sources, hashes and installers. Native AirPlay GStreamer runtime and Spotify Vorbis-license replacement remain open; no product or physical gate closes."
   ],
   "milestones": [
     {
@@ -59,6 +60,6 @@
       "remoteURL": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.46",
+  "developmentCheckpoint": "v0.1.0-dev.49",
   "remote": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge"
 }
