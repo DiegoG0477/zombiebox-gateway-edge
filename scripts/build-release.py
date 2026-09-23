@@ -62,6 +62,7 @@ def build(core, ndk, output, version, arch):
             "install.sh",
             "scripts/doctor.py",
             "scripts/install-module.py",
+            "scripts/install-node-module.py",
             "scripts/install-binary.py",
             "LICENSE",
             "NOTICE",

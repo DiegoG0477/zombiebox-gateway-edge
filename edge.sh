@@ -97,6 +97,11 @@ case ${1:-status} in
     boot-disable) rm -f "$HOME/.termux/boot/zombiebox" ;;
     module)
         shift
+        case " $* " in
+            *' --module youtube '* | *' --module youtube-receiver '*)
+                exec python3 "$component/scripts/install-node-module.py" "$@"
+                ;;
+        esac
         exec python3 "$component/scripts/install-module.py" "$@"
         ;;
     update)

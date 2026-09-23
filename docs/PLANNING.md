@@ -173,3 +173,13 @@ Consumes Core dev.44's host integration test for authenticated HLS alternate aud
 The Android/Bionic binaries and runtime behavior are unchanged. The existing
 Threadfin/MediaMTX module assets keep their exact release identities; Node,
 Spotify and AirPlay optional binary work and physical validation remain open.
+
+## dev.45 — optional Node module implementation
+
+Edge now has a portable JS builder for the locked YouTube catalog and TV receiver
+workers, with matching npm tarballs and source receipts, plus a compiler-free
+checksum-gated installer. It requires the installed Edge core to match the module's
+Core commit, preserves credentials and installs stopped. The official Termux Node24
+LTS is the candidate native runtime; host Node24 tests passed. Release assets,
+Bionic execution and actual TV Code/YouTube service behavior remain separate gates.
+Spotify and UxPlay still require native dependency/source closure.

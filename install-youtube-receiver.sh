@@ -5,7 +5,7 @@ set -euo pipefail
     exit 1
 }
 for tool in node npm python3; do command -v "$tool" >/dev/null; done
-node -e 'const [major,minor,patch]=process.versions.node.split(".").map(Number);if(major!==22||minor<22||(minor===22&&patch<2)){process.stderr.write("This lock requires native Node 22.22.2 or a newer 22.x patch.\n");process.exit(1)}'
+node -e 'const [major,minor,patch]=process.versions.node.split(".").map(Number);if(!((major===22&&(minor>22||(minor===22&&patch>=2)))||(major===24&&(minor>18||(minor===18&&patch>=0))))){process.stderr.write("This lock requires native Node 22.22.2+ or 24.18.0+ within those major versions.\n");process.exit(1)}'
 component=$(cd "$(dirname "$0")" && pwd)
 repo=$(python3 "$component/scripts/dependencies.py" check gateway-core)
 runtime="$HOME/.zombie"

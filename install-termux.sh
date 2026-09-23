@@ -32,9 +32,10 @@ if $with_cast; then
 fi
 if $with_youtube; then
     command -v node >/dev/null && command -v npm >/dev/null || {
-        echo 'Install a native Node >=22 runtime and npm.' >&2
+        echo 'Install native Node 24.18+ LTS and npm (pkg install nodejs-lts npm).' >&2
         exit 1
     }
+    node -e 'const [major,minor,patch]=process.versions.node.split(".").map(Number);if(!((major===22&&(minor>22||(minor===22&&patch>=2)))||(major===24&&(minor>18||(minor===18&&patch>=0))))){process.stderr.write("YouTube needs native Node 22.22.2+ or 24.18.0+ within those major versions.\n");process.exit(1)}'
 fi
 umask 077
 runtime="$HOME/.zombie"

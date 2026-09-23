@@ -64,9 +64,10 @@ connected. See [Termux:Boot's instructions](https://github.com/termux/termux-boo
 This initial bundle contains core, SQLite and synthetic probes; FFmpeg comes from
 Termux. The dev.37 [optional module path](docs/optional-modules.md) adds compiler-free
 Threadfin packaging for both ABIs. Dev.38 adds the MediaMTX Android module builder/installer and resolves its inline
-license inventory. YouTube, Spotify and experimental AirPlay still have outstanding
-binary packaging work; their source paths remain
-below. Modules are selected explicitly, never silently enabled.
+license inventory. YouTube catalog/TV receiver now have a source-closed portable
+JS module builder and compiler-free stopped-service installer, but publication and
+Android execution remain separate gates. Spotify and experimental AirPlay retain
+native dependency closure work. Modules are selected explicitly, never silently enabled.
 
 ### Available now: native source installation
 
@@ -90,8 +91,9 @@ references` before source builds. `ZOMBIE_CORE_DIR` selects a different checkout
 creates stopped runit services under Termux; enable only the modules you configure.
 
 No Docker or downloaded Linux runtime binary is used. Core needs Go >=1.25;
-pinned MediaMTX needs native Go >=1.26, and the receiver needs Node22.22.2+ within
-22.x. Physical execution, boot/wake-lock work, UxPlay feasibility and thermal gates
+pinned MediaMTX needs native Go >=1.26. The receiver accepts Node22.22.2+ within
+22.x or Node24.18.0+ within 24.x; the latter is a Termux prebuilt LTS candidate.
+Physical execution, boot/wake-lock work, UxPlay feasibility and thermal gates
 remain open. Do not label a Fedora compile as Android/Bionic compatibility.
 
 ## Development rules

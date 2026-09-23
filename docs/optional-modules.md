@@ -8,10 +8,28 @@ work with direct M3U/XMLTV without Threadfin.
 |---|---|---|
 | Threadfin 1.2.40 | ARMv7/ARM64 Android API24 PIE builder, source/dependency archives, ELF audit and compiler-free installer | Android execution, service/SSDP and workload acceptance deferred |
 | MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; [public dev.38 assets](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) available |
-| YouTube / TV receiver | Existing native source installation and pinned Node22 contract | Compiler-free compatible Node/runtime bundle still required |
+| YouTube / TV receiver | Portable JS module builder and checksum-gated stopped-service installer; Termux Node24 LTS candidate | Publish matching source/module assets and updated Edge core; validate Bionic Node, TV Code/DIAL and receiver behavior |
 | Spotify | Existing native source installation | Android native codec dependency closure and binary bundle |
 | AirPlay / UxPlay | Experimental native source installation | Android GStreamer/OpenSSL/libplist closure and binary bundle |
 | Rebrowser | Remote Full only | Local Edge browser is outside the supported baseline |
+
+## YouTube catalog and TV receiver module candidates
+
+Both workers are portable JavaScript/WASM: fresh locked npm installs on Linux
+Node24.18.0 had no `.node`, `.so` or ELF payloads, and all 14 wrapper tests passed.
+`scripts/build-node-module.py` packages each worker with installed dependencies,
+source files, exact npm tarballs checked against lockfile SHA512, source receipts
+and checksums. `scripts/install-node-module.py` checks the payload, source asset
+identity, Android API, matching installed Core commit and native Node version before
+replacing a stopped runit service. It preserves credentials and leaves the provider
+disabled. If native Node is absent, it installs Termux's prebuilt `nodejs-lts`; it
+never uses a Linux Node executable.
+
+These are host-built candidates until matching Edge core and both module/source
+assets are published and Bionic behavior is checked. The current official Termux
+LTS is Node24.18.0; the separate TUR Node22 package is 22.22.1, below our security
+floor. A later Termux package update can change the native runtime independently
+of the frozen JS module, so doctor reports the actual version.
 
 ## Threadfin installation
 

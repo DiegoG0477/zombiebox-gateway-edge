@@ -52,6 +52,9 @@ class DoctorTests(unittest.TestCase):
                 ("v22.22.2", True),
                 ("v22.22.1", False),
                 ("v24.1.0", False),
+                ("v24.18.0", True),
+                ("v24.19.0", True),
+                ("v23.10.0", False),
                 ("UNKNOWN", False),
             ):
                 with patch.object(doctor, "command", return_value=version):

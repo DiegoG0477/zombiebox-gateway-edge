@@ -118,8 +118,16 @@ def module_status(runtime, prefix):
             match = re.fullmatch(r"v(\d+)\.(\d+)\.(\d+)", version)
             compatible = bool(
                 match
-                and tuple(map(int, match.groups())) >= (22, 22, 2)
-                and int(match[1]) == 22
+                and (
+                    (
+                        int(match[1]) == 22
+                        and tuple(map(int, match.groups())) >= (22, 22, 2)
+                    )
+                    or (
+                        int(match[1]) == 24
+                        and tuple(map(int, match.groups())) >= (24, 18, 0)
+                    )
+                )
             )
             result[name]["runtimeVersionCompatible"] = compatible
     return result
