@@ -36,7 +36,8 @@
     "Dev.40: Optional doctor --network consumes the shared core endpoint report, redacts unsupported output and distinguishes old binary/timeout from verified reachability. Other optional module binary delivery remains open. No product or physical gate closes.",
     "Dev.41: Pins the shared capability-aware audio-selection core. Published dev.40 Android bundles retain their original identity; other optional binary modules remain open. No milestone closes.",
     "Dev.42: pin the shared preferred-audio planner. Public core binaries remain dev.40; remaining optional prebuilt modules and Android runtime acceptance remain open.",
-    "Dev.43: optional doctor --media validates bounded decoded-frame evidence through the shared core without granting receiver/network support. Older binaries remain unavailable/unsupported. Other optional Node/Spotify/AirPlay binary modules and physical gates remain open."
+    "Dev.43: optional doctor --media validates bounded decoded-frame evidence through the shared core without granting receiver/network support. Older binaries remain unavailable/unsupported. Other optional Node/Spotify/AirPlay binary modules and physical gates remain open.",
+    "Dev.44: consumes test-only Core dev.44 authenticated HLS alternate-audio coverage. Existing Android bundles and optional module identities remain unchanged; Bionic execution and other optional binary modules remain open."
   ],
   "milestones": [
     {
@@ -56,6 +57,6 @@
       "remoteURL": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.43",
+  "developmentCheckpoint": "v0.1.0-dev.44",
   "remote": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge"
 }

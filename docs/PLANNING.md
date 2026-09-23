@@ -166,3 +166,10 @@ Dev.42: pin the shared preferred-audio planner. Public core binaries remain dev.
 ## dev.43 navigation and functional media increment
 
 Dev.43: optional doctor --media validates bounded decoded-frame evidence through the shared core without granting receiver/network support. Older binaries remain unavailable/unsupported. Other optional Node/Spotify/AirPlay binary modules and physical gates remain open.
+
+## dev.44 authenticated HLS coverage pin
+
+Consumes Core dev.44's host integration test for authenticated HLS alternate audio.
+The Android/Bionic binaries and runtime behavior are unchanged. The existing
+Threadfin/MediaMTX module assets keep their exact release identities; Node,
+Spotify and AirPlay optional binary work and physical validation remain open.
