@@ -1,5 +1,14 @@
 # zombiebox-gateway-edge: component work
 
+## dev.59 onboarding and installable release channel
+
+The Termux one-line installer reads an installable release channel, currently
+published dev.50, and still accepts an explicit immutable version. README
+distinguishes its stable `runtime.env` pairing-code workaround from the local
+dev57 candidate's installer-owned `operator.code`, and lists provider credential
+sources. Host shell and packaging tests pass; no Android execution or new
+published archive is claimed.
+
 ## dev.53 operator code and onboarding
 
 New source installs generate and preserve a private six-digit operator code;

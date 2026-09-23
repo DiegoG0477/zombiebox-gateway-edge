@@ -3,6 +3,7 @@
   "repository": "zombiebox-gateway-edge",
   "productRegistry": "workspace:docs/milestones.json",
   "notes": [
+    "Dev.59: Edge README identifies credential sources and stable published/local pairing-code paths. The installer resolves an installable release channel, currently dev.50, unless an immutable version is given. Host tests pass; Android/runtime and public candidate gates remain open.",
     "Dev.58: README distinguishes the published dev.50 install set from private dev.57 Core/modules and documents the current persisted operator-code file. No binary is rebuilt or published; Android execution remains open.",
     "Dev.57: Pins Core dev.53 YouTube early-token recovery. Local matching ARM64/ARMv7 Core and optional Node/AirPlay/Spotify candidates require rebuild; public dev.50 remains immutable and Android execution unverified.",
     "Dev.56: Pins Core dev.52 local golden media fixtures and explicit host coverage matrix. Public Edge dev.50 binaries are unchanged; native Android and receiver acceptance remain open.",

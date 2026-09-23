@@ -37,7 +37,14 @@ workspace's ADR 0020 describes the feature and process boundaries.
 
 ## Installation
 
-### 1. Install the prebuilt core (experimental dev.50)
+The published binary route and the private candidate are different builds.
+The one-line installer below selects the newest **installable Edge release**;
+source checkpoint tags do not imply downloadable ARM binaries. Current local
+dev57 candidates live at `.local/builds/dev57` in this development workspace
+and have not been published. [Published Edge releases](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases)
+are listed separately.
+
+### 1. Install the prebuilt core (current published set: dev.50)
 
 The commands in this section install the **published dev.50 set only**. The
 current source implementation is newer. Its private dev.57 Core and optional
@@ -53,14 +60,16 @@ No Docker, root, Go or C compiler is required by the binary installer. It instal
 Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
 
 Install Termux from a maintained source, open it once, and ensure the phone and
-TV can reach each other on the same LAN. Download the version-pinned installer
-and review it, then install the core bundle:
+TV can reach each other on the same LAN. The current public installation is:
 
 ```sh
-bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.50
+curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/main/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge
 ```
 
-Equivalent one-line installation from the pinned release:
+`install.sh` reads `install-channel.txt` from `main`, currently dev.50. The
+channel advances only after the matching ARM archives, checksums and sources
+are published. The downloaded archive and its contents are then verified. For
+a repeatable or rollback install, explicitly pin a published version:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.50/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.50
@@ -84,21 +93,24 @@ availability and actual Bionic behavior require Android validation.
 ### 2. Pair the TV and enter your provider settings
 
 The published dev.50 Edge bundle generates a six-digit pairing code at each core
-start and prints it to stderr, which is awkward for a background service. **Before
-pairing**, set one private stable code in its runtime environment and restart
-the core. This step is needed for dev.50; a later binary release must include the
-new installer-owned `~/.zombie/config/operator.code` support in this checkout.
+start and prints it to stderr. **Before pairing**, create a stable private code
+once in `~/.zombie/config/runtime.env` and restart the core. This is ZombieBox's
+pairing/admin code, not a provider token. The dev.50 workaround is necessary
+because its published binary predates installer-owned `operator.code` support:
 
 ```sh
-printf 'ZOMBIE_PAIRING_CODE=%s\n' "$(python3 -c 'import secrets; print(secrets.randbelow(900000)+100000)')" >> "$HOME/.zombie/config/runtime.env"
+if ! grep -q '^ZOMBIE_PAIRING_CODE=' "$HOME/.zombie/config/runtime.env"; then
+  printf 'ZOMBIE_PAIRING_CODE=%s\n' "$(python3 -c 'import secrets; print(secrets.randbelow(900000)+100000)')" >> "$HOME/.zombie/config/runtime.env"
+fi
 chmod 600 "$HOME/.zombie/config/runtime.env"
 zombiebox stop
 zombiebox start zombied
 grep '^ZOMBIE_PAIRING_CODE=' "$HOME/.zombie/config/runtime.env"
 ```
 
-Run the `printf` line only once; it adds one code to the private file. Keep the
-displayed code private. On the TV, open Client **Settings → Connect gateway**,
+The guarded command does not add a second value when repeated. A normal restart
+or update preserves `runtime.env` and the code; deleting `~/.zombie` loses it.
+Keep the displayed code private. On the TV, open Client **Settings → Connect gateway**,
 select the discovered Edge phone or enter `http://PHONE_LAN_IP:8090`, and enter
 the six digits. If discovery is blocked by the Wi-Fi network, manual URL works.
 In **Settings → Providers**, add the M3U URL under IPTV; optional XMLTV URL,
@@ -106,11 +118,28 @@ Plex/Jellyfin/Stremio server URLs and tokens can be added the same way. Saving
 requires the operator code again, but the Client never persists provider secrets.
 The gateway stores these values in private SQLite, not in the APK.
 
+| Service | Credential or address, and where it comes from |
+| --- | --- |
+| IPTV | Your provider's HTTP(S) M3U URL; optionally its XMLTV guide URL. A public playlist needs no account token or Threadfin module. |
+| Plex | Your reachable Plex server URL and `X-Plex-Token` from [Plex's token guide](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/); its simple method can produce a temporary token. |
+| Jellyfin | Your server URL, an API key from **Admin Dashboard → API Keys**, and the intended user's ID from **Admin Dashboard → Users**. The gateway requires all three; see [Jellyfin user administration](https://jellyfin.org/docs/general/server/users/adding-managing-users/). ZombieBox does not supply them. |
+| Stremio | A chosen add-on endpoint/catalog, normally its [`manifest.json` URL](https://stremio.github.io/stremio-addon-guide/step1). Private add-on URLs can contain secrets. |
+| YouTube catalog / TV Code | No personal API key for anonymous browse or receiver pairing. The optional module creates its internal worker token. TV Code is not Google account sign-in. |
+| Spotify Connect | Install/enable its matching module, then use the Client **Services** URL/code with your Spotify account. Do not put a Spotify password or developer key in the APK. |
+| AirPlay / Cast | No Apple/Cast developer key. Enable the matching module; its internal token/PIN is generated locally. Pair Zombie Cast through TV consent. |
+| YouTube subscriptions/playlists (local candidate only) | Create a **TVs and Limited Input devices** OAuth client in [Google Cloud](https://developers.google.com/youtube/v3/guides/auth/devices) with YouTube Data API enabled; set its ID and optional secret in private `runtime.env`, then approve the Client's verification URL/code. Published dev.50 lacks this feature. |
+
+Start with only the services you use. Enter IPTV/Plex/Jellyfin/Stremio in
+Client **Settings → Providers** after pairing; each save asks for the same
+operator code. Server JSON entries override and lock the corresponding Client
+form. SQLite, `runtime.env` and backups contain secrets.
+
 In the **current local dev.57 Core candidate**, the installer instead creates
 `~/.zombie/config/operator.code` and preserves it across reinstalls. Read that
 file locally for TV pairing and credential changes; the dev.50 environment
-workaround above is specific to the older published binary. Never share either
-code or `~/.zombie/config/providers.json` in bug reports.
+workaround above is specific to the older published binary. Its corresponding
+`ZOMBIE_PAIRING_CODE` in `~/.zombie/config/runtime.env` must agree with the code
+file. Never share either code or `~/.zombie/config/providers.json` in bug reports.
 
 For server-side configuration, edit `~/.zombie/config/providers.json` as JSON.
 For example, `{"iptv":{"enabled":true,"url":"https://example.org/list.m3u"}}`

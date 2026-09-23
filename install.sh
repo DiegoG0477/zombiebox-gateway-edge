@@ -29,7 +29,7 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         *)
-            echo 'Usage: install.sh --repository OWNER/REPO --version vX.Y.Z | --bundle FILE --sha256 HASH' >&2
+            echo 'Usage: install.sh --repository OWNER/REPO [--version vX.Y.Z] | --bundle FILE --sha256 HASH' >&2
             exit 2
             ;;
     esac
@@ -40,8 +40,8 @@ if [[ -n $bundle ]]; then
         exit 2
     }
 else
-    [[ $repository =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ && $version =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ && -z $checksum ]] || {
-        echo 'Specify an actual published repository and immutable version. No latest release is selected.' >&2
+    [[ $repository =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ && -z $checksum ]] || {
+        echo 'Specify a published repository and no remote checksum override.' >&2
         exit 2
     }
 fi
@@ -60,6 +60,17 @@ case $(dpkg --print-architecture) in
         ;;
 esac
 pkg install -y curl python ffmpeg termux-services
+if [[ -z $bundle && -z $version ]]; then
+    channel=${ZOMBIE_INSTALL_CHANNEL_URL:-https://raw.githubusercontent.com/$repository/main/install-channel.txt}
+    version=$(curl --fail --location --silent --show-error --retry 3 --connect-timeout 10 --max-time 30 --max-filesize 128 "$channel") || {
+        echo 'Could not resolve the current installable Edge release.' >&2
+        exit 1
+    }
+fi
+if [[ -z $bundle && ! $version =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9.-]+)?$ ]]; then
+    echo 'Invalid Edge release channel or version.' >&2
+    exit 2
+fi
 temporary=$(mktemp -d)
 trap 'rm -rf -- "$temporary"' EXIT
 if [[ -z $bundle ]]; then
