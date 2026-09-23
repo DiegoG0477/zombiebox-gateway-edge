@@ -264,6 +264,13 @@ Dev.54: Pins Core dev.50 IPTV categories. Public dev.50 native bundles remain fr
 
 Dev.55: Pins Core dev.51 YouTube account OAuth and receiver lifecycle coverage; documents private native OAuth setup. Published dev.50 ARM bundles remain frozen; Android/Termux operation is unverified.
 
+## v0.1.0-dev.57 — account recovery core pin
+
+Dev.57 pins Core dev.53 with bounded early YouTube access-token recovery. Exact
+Core/Node/AirPlay/Spotify binary identity is required for a future coherent
+Android/Bionic release; public dev.50 remains unchanged. Host packaging cannot
+substitute for actual Termux, account or receiver tests.
+
 ## v0.1.0-dev.56 — golden media core pin
 
 Dev.56: Pins Core dev.52 local golden media fixtures and explicit host coverage matrix. Public Edge dev.50 binaries are unchanged; native Android and receiver acceptance remain open.

@@ -161,7 +161,7 @@ created by its installer. Spotify Connect authorization runs from Client
 not YouTube account sign-in. Module installation and process start alone do not
 prove a real account, Apple sender or physical player is compatible.
 
-The newer source Gateway also supports read-only YouTube OAuth account browsing;
+The current source Gateway (dev.57) also supports read-only YouTube OAuth account browsing;
 the published dev.50 Edge binaries do not. For a future bundle containing this
 feature, create a Google OAuth client of type **TVs and Limited Input devices**
 with the YouTube Data API enabled. Add the ID (and optional secret if issued) to
