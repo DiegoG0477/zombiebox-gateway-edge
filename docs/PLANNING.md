@@ -241,3 +241,10 @@ package has a notice inventory entry, Core ELF imports align with API24, and all
 credentials; extraction, manifest validation and stopped-service installation
 passed on a simulated host. Android/Bionic execution, accounts, DIAL reception and
 Spotify/AirPlay native modules remain open. No product milestone closes.
+
+## dev.52 — shared AirPlay receiver coverage pin
+
+The development checkout consumes Core dev.48's authenticated video-to-audio-to-idle
+receiver host test. Public Edge dev.50 ARM64/ARMv7 binaries and sources retain
+their original Core dev.47 build identity; no archive is relabeled or installed.
+Host package tests pass. Actual Bionic, iOS/AirPlay and device playback remain open.
