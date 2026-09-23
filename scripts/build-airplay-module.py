@@ -177,7 +177,16 @@ def build(args, core):
             "GOOS": "android",
             "GOARCH": "arm64" if args.arch == "arm64" else "arm",
             "GOARM": "7",
-            "CGO_ENABLED": "0",
+            "CGO_ENABLED": "0" if args.arch == "arm64" else "1",
+            "CC": str(
+                ndk
+                / "toolchains/llvm/prebuilt/linux-x86_64/bin"
+                / (
+                    "aarch64-linux-android24-clang"
+                    if args.arch == "arm64"
+                    else "armv7a-linux-androideabi24-clang"
+                )
+            ),
             "GOTOOLCHAIN": "go1.25.6",
             "GOMAXPROCS": "2",
         }
