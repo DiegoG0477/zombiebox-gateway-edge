@@ -183,3 +183,14 @@ Core commit, preserves credentials and installs stopped. The official Termux Nod
 LTS is the candidate native runtime; host Node24 tests passed. Release assets,
 Bionic execution and actual TV Code/YouTube service behavior remain separate gates.
 Spotify and UxPlay still require native dependency/source closure.
+
+## dev.46 — public Edge Node/Core artifact delivery
+
+The dev.45 prerelease now carries matching source archives, checksums and binaries
+for API24 ARM64/ARMv7 Core plus portable YouTube catalog/TV receiver workers. The
+121 npm package tarballs were checked against lockfile SHA512, every installed
+package has a notice inventory entry, Core ELF imports align with API24, and all
+14 remote asset digests match local files. Both module downloads passed without
+credentials; extraction, manifest validation and stopped-service installation
+passed on a simulated host. Android/Bionic execution, accounts, DIAL reception and
+Spotify/AirPlay native modules remain open. No product milestone closes.

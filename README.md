@@ -10,7 +10,7 @@ Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
 ## Installation
 
-### Prebuilt Android bundle (experimental dev.40)
+### Prebuilt Android bundle (experimental dev.45)
 
 Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
 userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
@@ -20,16 +20,16 @@ Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
 Download the version-pinned installer and review it, then install the core bundle:
 
 ```sh
-bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.40
+bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.45
 ```
 
 Equivalent one-line installation from the pinned release:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.40/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.40
+curl -fsSL https://raw.githubusercontent.com/ZombieBox-tv/zombiebox-gateway-edge/v0.1.0-dev.45/install.sh | bash -s -- --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.45
 ```
 
-The [experimental release](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.40) pairs each ABI archive with its corresponding-source archive and checksums.
+The [experimental release](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.45) pairs each ABI archive with its corresponding-source archive and checksums.
 For a locally transferred build, supply its independently checked SHA256:
 
 ```sh
@@ -51,7 +51,7 @@ zombiebox doctor
 zombiebox stop
 zombiebox boot-enable     # optional Termux:Boot hook
 zombiebox boot-disable
-zombiebox update --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.40
+zombiebox update --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.45
 zombiebox uninstall       # removes services, retains private data
 ```
 
@@ -64,10 +64,19 @@ connected. See [Termux:Boot's instructions](https://github.com/termux/termux-boo
 This initial bundle contains core, SQLite and synthetic probes; FFmpeg comes from
 Termux. The dev.37 [optional module path](docs/optional-modules.md) adds compiler-free
 Threadfin packaging for both ABIs. Dev.38 adds the MediaMTX Android module builder/installer and resolves its inline
-license inventory. YouTube catalog/TV receiver now have a source-closed portable
-JS module builder and compiler-free stopped-service installer, but publication and
-Android execution remain separate gates. Spotify and experimental AirPlay retain
-native dependency closure work. Modules are selected explicitly, never silently enabled.
+license inventory. YouTube catalog/TV receiver now have [public dev.45
+modules](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.45)
+with matching sources, checksums and a compiler-free stopped-service installer:
+
+```sh
+zombiebox module --module youtube --version v0.1.0-dev.45
+zombiebox module --module youtube-receiver --version v0.1.0-dev.45
+```
+
+The installer obtains prebuilt Termux Node LTS when absent, validates its version,
+and leaves each provider disabled until configured. Android execution remains an
+acceptance gate. Spotify and experimental AirPlay retain native dependency closure
+work. Modules are selected explicitly, never silently enabled.
 
 ### Available now: native source installation
 

@@ -8,7 +8,7 @@ work with direct M3U/XMLTV without Threadfin.
 |---|---|---|
 | Threadfin 1.2.40 | ARMv7/ARM64 Android API24 PIE builder, source/dependency archives, ELF audit and compiler-free installer | Android execution, service/SSDP and workload acceptance deferred |
 | MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; [public dev.38 assets](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) available |
-| YouTube / TV receiver | Portable JS module builder and checksum-gated stopped-service installer; Termux Node24 LTS candidate | Publish matching source/module assets and updated Edge core; validate Bionic Node, TV Code/DIAL and receiver behavior |
+| YouTube / TV receiver | [Public dev.45](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.45) portable JS modules, source archives, checksum-gated stopped-service installer and matching Core for both ABIs | Validate Bionic Node, TV Code/DIAL and receiver behavior |
 | Spotify | Existing native source installation | Android native codec dependency closure and binary bundle |
 | AirPlay / UxPlay | Experimental native source installation | Android GStreamer/OpenSSL/libplist closure and binary bundle |
 | Rebrowser | Remote Full only | Local Edge browser is outside the supported baseline |
@@ -25,9 +25,9 @@ replacing a stopped runit service. It preserves credentials and leaves the provi
 disabled. If native Node is absent, it installs Termux's prebuilt `nodejs-lts`; it
 never uses a Linux Node executable.
 
-These are host-built candidates until matching Edge core and both module/source
-assets are published and Bionic behavior is checked. The current official Termux
-LTS is Node24.18.0; the separate TUR Node22 package is 22.22.1, below our security
+These host-built modules and their matching Core are now published with verified
+remote asset hashes. Bionic behavior remains unchecked. At this release's build,
+Termux LTS is Node24.18.0; the separate TUR Node22 package is 22.22.1, below our security
 floor. A later Termux package update can change the native runtime independently
 of the frozen JS module, so doctor reports the actual version.
 
