@@ -264,6 +264,13 @@ Dev.54: Pins Core dev.50 IPTV categories. Public dev.50 native bundles remain fr
 
 Dev.55: Pins Core dev.51 YouTube account OAuth and receiver lifecycle coverage; documents private native OAuth setup. Published dev.50 ARM bundles remain frozen; Android/Termux operation is unverified.
 
+## v0.1.0-dev.58 — installation identity guidance
+
+The README separates public dev.50 install commands and their pairing-code
+workaround from the locally built dev.57 Core/optional candidates, which require
+one exact Core commit and a private persisted operator code. This is a docs-only
+checkpoint; the dev.57 archives are unchanged and Android execution is unverified.
+
 ## v0.1.0-dev.57 — account recovery core pin
 
 Dev.57 pins Core dev.53 with bounded early YouTube access-token recovery. Exact

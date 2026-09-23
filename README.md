@@ -39,6 +39,14 @@ workspace's ADR 0020 describes the feature and process boundaries.
 
 ### 1. Install the prebuilt core (experimental dev.50)
 
+The commands in this section install the **published dev.50 set only**. The
+current source implementation is newer. Its private dev.57 Core and optional
+module candidates are kept under `.local/builds/dev57` in the development
+workspace and are not downloadable through these release commands. Every
+YouTube, AirPlay and Spotify module is checked against the exact installed Core
+commit. Do not install a dev.50 module onto the dev.57 candidate, or assume the
+published dev.50 bundle contains IPTV favorites or YouTube account browsing.
+
 Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
 userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
 No Docker, root, Go or C compiler is required by the binary installer. It installs
@@ -97,6 +105,12 @@ In **Settings → Providers**, add the M3U URL under IPTV; optional XMLTV URL,
 Plex/Jellyfin/Stremio server URLs and tokens can be added the same way. Saving
 requires the operator code again, but the Client never persists provider secrets.
 The gateway stores these values in private SQLite, not in the APK.
+
+In the **current local dev.57 Core candidate**, the installer instead creates
+`~/.zombie/config/operator.code` and preserves it across reinstalls. Read that
+file locally for TV pairing and credential changes; the dev.50 environment
+workaround above is specific to the older published binary. Never share either
+code or `~/.zombie/config/providers.json` in bug reports.
 
 For server-side configuration, edit `~/.zombie/config/providers.json` as JSON.
 For example, `{"iptv":{"enabled":true,"url":"https://example.org/list.m3u"}}`
