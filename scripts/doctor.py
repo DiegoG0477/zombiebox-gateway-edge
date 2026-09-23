@@ -63,7 +63,8 @@ def report(runtime, prefix):
             "core": "android-prebuilt"
             if (runtime / "current/release.json").is_file()
             else "native-build-required",
-            "airplay": "experimental-native-build",
+            "airplay": "prebuilt-android-unverified",
+            "spotify": "prebuilt-android-unverified",
             "rebrowser": "remote-full-only",
         },
         "limitations": [

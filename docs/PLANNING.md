@@ -15,6 +15,19 @@ Keep a separate validation track for hardware/account/latency/memory evidence.
 Use development checkpoint tags until complete exit gates are evidenced. Hosted
 issues/milestones can be attached to the shared GitHub Project once remotes exist.
 
+## dev.51 coherent public Edge release
+
+[Dev.50](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.50)
+publishes one coherent Android/Bionic Core dev.47 source identity with portable
+YouTube catalog/TV receiver modules and ARM64/ARMv7 AirPlay and Spotify modules.
+All eight bundles and matching source archives were rebuilt from clean commits.
+Thirty remote asset sizes/SHA256 matched local files, and an anonymous Spotify
+ARMv7 download matched its local hash. Host extraction, manifest, ABI/API24,
+transitive native-library, source hash and stopped-service checks passed. Spotify
+uses pinned MIT Vorbis modules and fixed native Termux package versions. Android
+installation, accounts, receiver audio/video, mDNS/PIN and thermal behavior remain
+unverified. M10/M11 and product physical gates stay open.
+
 ## dev.50 licensed Spotify module candidate
 
 This checkout pins Core dev.47's licensed go-librespot source preparation. Its

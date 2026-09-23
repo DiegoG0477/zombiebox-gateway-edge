@@ -75,7 +75,7 @@ case ${1:-status} in
             echo 'Gateway is not installed.'
             failed=1
         }
-        printf 'AirPlay: optional prebuilt module; receiver behavior needs Android validation.\nBrowser: remote Full only.\n'
+        printf 'AirPlay/Spotify: optional prebuilt modules; receiver behavior needs Android validation.\nBrowser: remote Full only.\n'
         exit "$failed"
         ;;
     boot-enable)

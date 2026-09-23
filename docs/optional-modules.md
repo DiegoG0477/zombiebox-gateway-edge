@@ -8,9 +8,9 @@ work with direct M3U/XMLTV without Threadfin.
 |---|---|---|
 | Threadfin 1.2.40 | ARMv7/ARM64 Android API24 PIE builder, source/dependency archives, ELF audit and compiler-free installer | Android execution, service/SSDP and workload acceptance deferred |
 | MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; [public dev.38 assets](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) available |
-| YouTube / TV receiver | [Public dev.47](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.47) portable JS modules, source archives, checksum-gated stopped-service installer and matching Core for both ABIs | Validate Bionic Node, TV Code/DIAL and receiver behavior |
-| Spotify | Licensed pure-Go Vorbis patch, ARM64/ARMv7 Android PIE candidate builder and compiler-free stopped-service installer | Publish a matching Core/Node/AirPlay/Spotify release; validate Android audio, accounts and thermal behavior |
-| AirPlay / UxPlay | [Public dev.48](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.48) ARMv7/ARM64 binaries, sources and compiler-free stopped-service installer | Validate Termux dependency closure, mDNS, PIN and audio/video on Android |
+| YouTube / TV receiver | [Public dev.50](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.50) portable JS modules, source archives, checksum-gated stopped-service installer and matching Core for both ABIs | Validate Bionic Node, TV Code/DIAL and receiver behavior |
+| Spotify | [Public dev.50](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.50) licensed Vorbis patch, ARM64/ARMv7 PIE binaries, sources/notices and fixed-package stopped-service installer | Validate exact native package installation, Android audio, accounts and thermal behavior |
+| AirPlay / UxPlay | [Public dev.50](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.50) ARMv7/ARM64 binaries, sources and compiler-free stopped-service installer | Validate Termux dependency closure, mDNS, PIN and audio/video on Android |
 | Rebrowser | Remote Full only | Local Edge browser is outside the supported baseline |
 
 ## YouTube catalog and TV receiver module candidates
@@ -44,10 +44,10 @@ checks the executable and worker before stopping an existing service, preserves
 PIN/tokens and creates a stopped `zombie-airplay` service. It requires the exact
 Core commit in the installed Edge bundle.
 
-Install [dev.47 Core](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.47) first, then:
+Install [dev.50 Core](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.50) first, then:
 
 ```sh
-zombiebox module --module airplay --version v0.1.0-dev.48
+zombiebox module --module airplay --version v0.1.0-dev.50
 zombiebox start zombie-airplay
 ```
 
@@ -56,6 +56,25 @@ The host ELF audit confirms Android API24 imports, ABI, PIE/interpreter and
 but not the complete runtime transitive closure. Native GStreamer plugins,
 receiver discovery, PIN, audio and video still require Android execution and
 physical acceptance. The module does not silently enable AirPlay in Core.
+
+## Spotify prebuilt module
+
+Install the matching dev.50 Core first, then:
+
+```sh
+zombiebox module --module spotify --version v0.1.0-dev.50
+zombiebox start zombie-spotify
+```
+
+The module contains the pinned go-librespot source patch, worker, notices and
+matching source archive. It replaces `xlab/vorbis-go` with MIT `oggvorbis` and
+`vorbis`; host checks cover Ogg metadata, stereo decoding, gain and seeking.
+The installer requires exactly Termux `libflac=1.5.0-1`, `libmpg123=1.33.7` and
+`libogg=1.3.6-1`. If those versions are unavailable, it fails before stopping
+the previous service. Private account state and worker tokens are preserved.
+It creates a stopped service and does not enable the provider automatically.
+Account playback, A/V routing, CPU/memory and thermal behavior still require
+Android execution; a host cross-build does not prove them.
 
 ## Threadfin installation
 
