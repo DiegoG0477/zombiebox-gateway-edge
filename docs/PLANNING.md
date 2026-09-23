@@ -255,3 +255,7 @@ The development checkout consumes Core dev.48's authenticated video-to-audio-to-
 receiver host test. Public Edge dev.50 ARM64/ARMv7 binaries and sources retain
 their original Core dev.47 build identity; no archive is relabeled or installed.
 Host package tests pass. Actual Bionic, iOS/AirPlay and device playback remain open.
+
+## v0.1.0-dev.54 — shared IPTV category pin
+
+Dev.54: Pins Core dev.50 IPTV categories. Public dev.50 native bundles remain frozen and do not contain this development checkout; Android operation is unverified.

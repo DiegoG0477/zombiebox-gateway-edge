@@ -3,6 +3,7 @@
   "repository": "zombiebox-gateway-edge",
   "productRegistry": "workspace:docs/milestones.json",
   "notes": [
+    "Dev.54: Pins Core dev.50 IPTV categories. Public dev.50 native bundles remain frozen and do not contain this development checkout; Android operation is unverified.",
     "Dev.53: New source installer persists a private operator code and README documents dev.50 workaround, architecture and provider setup. Published dev.50 binaries remain frozen; Android execution is unverified.",
     "Local component scope; product exit gates remain open. Hosted milestones are open; see remoteURL entries.",
     "Dev.10: shared local media tracks/text subtitles and client Home refinement. Cast consumes the protocol transport update. Product exit gates remain open.",
