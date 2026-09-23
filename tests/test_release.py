@@ -121,12 +121,17 @@ class ReleaseTests(unittest.TestCase):
             config.write_text('{"private":"keep"}')
             (runtime / "state/gateway.db").write_bytes(b"private database")
             environment = (runtime / "config/runtime.env").read_bytes()
+            operator = runtime / "config/operator.code"
+            operator_code = operator.read_bytes()
+            self.assertRegex(operator_code.decode(), r"^[0-9]{6}\n$")
+            self.assertEqual(operator.stat().st_mode & 0o777, 0o600)
             installer.install(self.package, "arm64", 30, "local", "")
             self.assertEqual(config.read_text(), '{"private":"keep"}')
             self.assertEqual(
                 (runtime / "state/gateway.db").read_bytes(), b"private database"
             )
             self.assertEqual((runtime / "config/runtime.env").read_bytes(), environment)
+            self.assertEqual(operator.read_bytes(), operator_code)
             self.assertTrue((runtime / "bin/zombied").is_file())
 
 

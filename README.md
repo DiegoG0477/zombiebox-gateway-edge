@@ -8,16 +8,45 @@ Development checkpoints are not stable releases or physical compatibility claims
 
 Depends on the exact gateway-core commit in `dependencies.lock.json`.
 
+## How Edge fits the system
+
+```text
+Services / M3U / home media servers
+          │ HTTPS and provider-specific protocols
+          ▼
+Android phone + Termux: shared Go gateway + SQLite + FFmpeg
+          │ optional native/Node modules: YouTube, Spotify, AirPlay, MediaMTX
+          │ HTTP/1.1 JSON and LAN media; UDP discovery
+          ▼
+Zombie Client on a separate TV / old Android device
+          ▲
+          └─ paired Zombie Cast phone for remote and mirroring
+```
+
+Edge runs the **same `zombiebox-gateway-core` implementation** as Linux Full,
+but packages it as Android/Bionic executables and Termux services instead of
+Docker images. Provider adapters translate remote APIs into the shared
+`zombiebox-protocol` semantic models; FFmpeg handles compatible media output.
+Standalone tools remain optional: YouTube uses a private Node worker, Spotify
+wraps go-librespot, AirPlay wraps UxPlay, MediaMTX relays Cast, and Threadfin is
+only for IPTV setups that need it. Direct M3U/XMLTV works in the core. The TV
+Client never receives service passwords or executes these tools. SQLite and
+cached media live under `~/.zombie`; downloaded source references are not
+runtime dependencies. Rebrowser remains a Full-hosted feature. The central
+workspace's ADR 0020 describes the feature and process boundaries.
+
 ## Installation
 
-### Prebuilt Android bundle (experimental dev.50)
+### 1. Install the prebuilt core (experimental dev.50)
 
 Target: the standard Termux application on Android 7+/API24, with `aarch64` or `arm`
 userland. ARMv7 and ARM64 are detected using `dpkg`, not the kernel's architecture.
 No Docker, root, Go or C compiler is required by the binary installer. It installs
 Termux's `curl`, `python`, `ffmpeg` and `termux-services` packages.
 
-Download the version-pinned installer and review it, then install the core bundle:
+Install Termux from a maintained source, open it once, and ensure the phone and
+TV can reach each other on the same LAN. Download the version-pinned installer
+and review it, then install the core bundle:
 
 ```sh
 bash install.sh --repository ZombieBox-tv/zombiebox-gateway-edge --version v0.1.0-dev.50
@@ -43,6 +72,40 @@ switches the launcher. Old directories remain available for operator recovery;
 this is not an automatic database rollback. It starts the gateway with UDP8098 LAN
 discovery. Dependencies and optional module installation remain visible; package
 availability and actual Bionic behavior require Android validation.
+
+### 2. Pair the TV and enter your provider settings
+
+The published dev.50 Edge bundle generates a six-digit pairing code at each core
+start and prints it to stderr, which is awkward for a background service. **Before
+pairing**, set one private stable code in its runtime environment and restart
+the core. This step is needed for dev.50; a later binary release must include the
+new installer-owned `~/.zombie/config/operator.code` support in this checkout.
+
+```sh
+printf 'ZOMBIE_PAIRING_CODE=%s\n' "$(python3 -c 'import secrets; print(secrets.randbelow(900000)+100000)')" >> "$HOME/.zombie/config/runtime.env"
+chmod 600 "$HOME/.zombie/config/runtime.env"
+zombiebox stop
+zombiebox start zombied
+grep '^ZOMBIE_PAIRING_CODE=' "$HOME/.zombie/config/runtime.env"
+```
+
+Run the `printf` line only once; it adds one code to the private file. Keep the
+displayed code private. On the TV, open Client **Settings → Connect gateway**,
+select the discovered Edge phone or enter `http://PHONE_LAN_IP:8090`, and enter
+the six digits. If discovery is blocked by the Wi-Fi network, manual URL works.
+In **Settings → Providers**, add the M3U URL under IPTV; optional XMLTV URL,
+Plex/Jellyfin/Stremio server URLs and tokens can be added the same way. Saving
+requires the operator code again, but the Client never persists provider secrets.
+The gateway stores these values in private SQLite, not in the APK.
+
+For server-side configuration, edit `~/.zombie/config/providers.json` as JSON.
+For example, `{"iptv":{"enabled":true,"url":"https://example.org/list.m3u"}}`
+is a complete minimal file. A provider present in this file becomes read-only in
+Client Settings; remove its entry to use the Client-managed SQLite setting.
+Restart the core after editing. Keep the file private with `chmod 600` and never
+share it in logs or bug reports.
+
+### 3. Add optional modules only when needed
 
 ```sh
 zombiebox                 # start core; default after installation
@@ -81,6 +144,22 @@ Termux native package versions in its manifest; unavailable versions fail before
 changing a running service. Its [licensed decoder patch](https://github.com/ZombieBox-tv/zombiebox-gateway-core/blob/v0.1.0-dev.47/wrappers/spotify/README.md)
 replaces the earlier Vorbis binding. Android execution, accounts and A/V remain
 acceptance gates; see [optional modules](docs/optional-modules.md).
+
+After installing a module, set its existing entry's `enabled` field to `true` in
+`~/.zombie/config/providers.json`; keep its generated URL and token untouched.
+Then restart Core and start that module, for example:
+
+```sh
+zombiebox stop
+zombiebox start zombied zombie-youtube
+zombiebox status
+```
+
+The module's private worker credentials are under `~/.zombie/config/` and are
+created by its installer. Spotify Connect authorization runs from Client
+**Services** through the displayed URL/code. YouTube TV Code is receiver pairing,
+not YouTube account sign-in. Module installation and process start alone do not
+prove a real account, Apple sender or physical player is compatible.
 
 ### Available now: native source installation
 

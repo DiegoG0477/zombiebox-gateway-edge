@@ -4,6 +4,12 @@ runtime="$HOME/.zombie"
 set -a
 source "$runtime/config/runtime.env"
 set +a
+IFS= read -r ZOMBIE_PAIRING_CODE <"$runtime/config/operator.code"
+[[ $ZOMBIE_PAIRING_CODE =~ ^[0-9]{6}$ ]] || {
+    echo 'Invalid operator code' >&2
+    exit 1
+}
+export ZOMBIE_PAIRING_CODE
 export GOMEMLIMIT=192MiB GOMAXPROCS=2
 listen=${ZOMBIE_LISTEN:-0.0.0.0:8090}
 args=(-listen "$listen" -state "$runtime/state/gateway.db" -media-dir "$runtime/media" -config "$runtime/config/providers.json" -media-tools -probe-dir "$runtime/current/probes")

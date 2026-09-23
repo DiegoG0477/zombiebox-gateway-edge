@@ -1,5 +1,12 @@
 # zombiebox-gateway-edge: component work
 
+## dev.53 operator code and onboarding
+
+New source installs generate and preserve a private six-digit operator code;
+the runit service exports it to the same Go core on every start. Document the
+published dev.50 workaround and the steps for credentials and optional modules.
+Prebuilt dev.50 still needs a new release to contain this source fix.
+
 The product milestones relevant to this repository are M10, M11.
 The local registry is a component projection of the workspace plan. Closing a
 component task does not close a product-wide milestone or a physical validation gate.

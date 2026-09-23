@@ -167,6 +167,10 @@ def install(package, arch, api, version, repository):
         + secrets.token_hex(32)
         + "\n",
     )
+    write_new(
+        runtime / "config/operator.code",
+        f"{secrets.randbelow(900000) + 100000:06d}\n",
+    )
     current = runtime / "current"
     temporary = runtime / "current.next"
     temporary.unlink(missing_ok=True)
