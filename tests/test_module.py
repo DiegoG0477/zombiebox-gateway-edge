@@ -159,6 +159,78 @@ class ModuleTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             modules.validate(self.package, "mediamtx", "arm64", 24)
 
+    def test_airplay_requires_matching_core_and_preserves_private_configuration(self):
+        (self.package / "bin/threadfin").rename(self.package / "bin/airplay")
+        (self.package / "bin/zombie-worker").write_bytes(
+            (self.package / "bin/airplay").read_bytes()
+        )
+        for name in ("licenses/llhttp-LICENSE", "licenses/playfair-LICENSE"):
+            (self.package / name).write_text("notice")
+        self.record.update(
+            module="airplay",
+            upstreamCommit=modules.MODULES["airplay"],
+            coreCommit="c" * 40,
+            externalPackages=[
+                "openssl",
+                "libplist",
+                "gstreamer",
+                "gst-plugins-base",
+                "gst-plugins-good",
+                "gst-plugins-bad",
+                "glib",
+                "libc++",
+            ],
+            sourceArchive=dict(
+                name="zombiebox-airplay-android-arm64-sources.tar.gz",
+                sha256="d" * 64,
+            ),
+        )
+        self.save()
+        runtime, prefix = self.root / "runtime", self.root / "prefix"
+        (runtime / "bin").mkdir(parents=True)
+        (runtime / "bin/zombied").write_text("core")
+        (runtime / "current").mkdir()
+        (runtime / "current/release.json").write_text(
+            json.dumps({"coreCommit": "e" * 40})
+        )
+        with (
+            patch.object(modules.subprocess, "run") as run,
+            self.assertRaisesRegex(ValueError, "matching Edge core"),
+        ):
+            modules.install(self.package, "airplay", "arm64", 24, runtime, prefix)
+        run.assert_not_called()
+        (runtime / "current/release.json").write_text(
+            json.dumps({"coreCommit": "c" * 40})
+        )
+        (runtime / "config").mkdir()
+        (runtime / "config/providers.json").write_text("{}")
+        private = runtime / "config/airplay-worker.json"
+        private.write_text('{"token":"existing-secret","pin":"1234"}')
+        with (
+            patch.object(modules.subprocess, "run") as run,
+            patch.object(
+                modules.shutil, "which", return_value="/termux/gst-inspect-1.0"
+            ),
+        ):
+            modules.install(self.package, "airplay", "arm64", 24, runtime, prefix)
+        self.assertEqual(
+            run.call_count, 7
+        )  # Native packages, four RTP plugins, UxPlay help, worker help.
+        self.assertEqual(
+            private.read_text(), '{"token":"existing-secret","pin":"1234"}'
+        )
+        self.assertTrue((prefix / "var/service/zombie-airplay/down").exists())
+        self.assertEqual(
+            json.loads((runtime / "config/providers.json").read_text())["airplay"][
+                "enabled"
+            ],
+            False,
+        )
+        self.assertEqual(
+            (runtime / "bin/uxplay").read_bytes(),
+            (self.package / "bin/airplay").read_bytes(),
+        )
+
     def test_archive_rejects_traversal_links_duplicates_and_corruption(self):
         for names, kind in (
             (["../escape"], tarfile.REGTYPE),

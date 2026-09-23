@@ -75,8 +75,10 @@ zombiebox module --module youtube-receiver --version v0.1.0-dev.45
 
 The installer obtains prebuilt Termux Node LTS when absent, validates its version,
 and leaves each provider disabled until configured. Android execution remains an
-acceptance gate. Spotify and experimental AirPlay retain native dependency closure
-work. Modules are selected explicitly, never silently enabled.
+acceptance gate. An ARMv7/ARM64 UxPlay binary candidate and compiler-free AirPlay
+installer are now in [optional modules](docs/optional-modules.md). Spotify still
+needs a distributable replacement for an unlicensed Vorbis binding. Modules are
+selected explicitly, never silently enabled.
 
 ### Available now: native source installation
 
@@ -102,7 +104,7 @@ creates stopped runit services under Termux; enable only the modules you configu
 No Docker or downloaded Linux runtime binary is used. Core needs Go >=1.25;
 pinned MediaMTX needs native Go >=1.26. The receiver accepts Node22.22.2+ within
 22.x or Node24.18.0+ within 24.x; the latter is a Termux prebuilt LTS candidate.
-Physical execution, boot/wake-lock work, UxPlay feasibility and thermal gates
+Physical execution, boot/wake-lock work, UxPlay receiver operation and thermal gates
 remain open. Do not label a Fedora compile as Android/Bionic compatibility.
 
 ## Development rules

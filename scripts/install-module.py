@@ -8,6 +8,7 @@ import importlib.util
 import json
 import os
 import re
+import secrets
 import shutil
 import subprocess
 import tarfile
@@ -18,6 +19,7 @@ LIMIT = 256 << 20
 MODULES = {
     "threadfin": "6b9c0ccf16164eb362af0a44660228267734c5aa",
     "mediamtx": "048255986f7e04b859b4c4efe651448ec785ecd4",
+    "airplay": "57ea83411d5f7e0b38c5841987439340543f025c",
 }
 
 
@@ -113,6 +115,14 @@ def validate(package, module, arch, api):
     }
     if module == "mediamtx":
         required.add("mediamtx.yml")
+    if module == "airplay":
+        required.update(
+            {
+                "bin/zombie-worker",
+                "licenses/llhttp-LICENSE",
+                "licenses/playfair-LICENSE",
+            }
+        )
     if not required.issubset(files) or actual != set(files):
         raise ValueError("Incomplete or unexpected module files")
     for name, checksum in files.items():
@@ -138,17 +148,54 @@ def validate(package, module, arch, api):
     spec.loader.exec_module(installer)
     if not installer.android_elf((package / "bin" / module).read_bytes(), arch):
         raise ValueError("Expected an Android PIE executable for this ABI")
+    if module == "airplay" and not installer.android_elf(
+        (package / "bin/zombie-worker").read_bytes(), arch
+    ):
+        raise ValueError("Expected an Android worker for this ABI")
     return record
 
 
 def install(package, module, arch, api, runtime, prefix):
-    validate(package, module, arch, api)
+    record = validate(package, module, arch, api)
     if not (runtime / "bin/zombied").is_file():
         raise ValueError("Install the Edge core first")
+    if module == "airplay":
+        core = json.loads((runtime / "current/release.json").read_text())
+        if record.get("coreCommit") != core.get("coreCommit"):
+            raise ValueError("AirPlay worker requires its exact matching Edge core")
+        old_uxplay = runtime / "bin/uxplay"
+        if old_uxplay.exists() and not old_uxplay.is_symlink():
+            raise ValueError(
+                "Migrate the existing source-built uxplay before installing a binary module"
+            )
     if module == "mediamtx" and not (runtime / "config/runtime.env").is_file():
         raise ValueError("Install the core runtime configuration before MediaMTX")
     binary = package / "bin" / module
     binary.chmod(0o700)
+    if module == "airplay":
+        packages = record.get("externalPackages")
+        if packages != [
+            "openssl",
+            "libplist",
+            "gstreamer",
+            "gst-plugins-base",
+            "gst-plugins-good",
+            "gst-plugins-bad",
+            "glib",
+            "libc++",
+        ]:
+            raise ValueError("Unexpected AirPlay runtime package set")
+        subprocess.run(["pkg", "install", "-y", *packages], check=True, timeout=300)
+        if not shutil.which("gst-inspect-1.0"):
+            raise ValueError("Native GStreamer inspection tool is unavailable")
+        for element in ("rtpL16pay", "rtph264pay", "multiudpsink", "udpsink"):
+            subprocess.run(
+                ["gst-inspect-1.0", element],
+                check=True,
+                timeout=15,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
     subprocess.run(
         [str(binary), "-h"],
         check=True,
@@ -156,6 +203,16 @@ def install(package, module, arch, api, runtime, prefix):
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
+    if module == "airplay":
+        worker = package / "bin/zombie-worker"
+        worker.chmod(0o700)
+        subprocess.run(
+            [str(worker), "-h"],
+            check=True,
+            timeout=15,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
     directory = runtime / "modules" / module
     directory.mkdir(parents=True, exist_ok=True, mode=0o700)
     release = Path(tempfile.mkdtemp(prefix="release-", dir=directory))
@@ -173,6 +230,11 @@ def install(package, module, arch, api, runtime, prefix):
     link.unlink(missing_ok=True)
     link.symlink_to(directory / "current/bin" / module)
     link.replace(runtime / "bin" / module)
+    if module == "airplay":
+        uxplay = runtime / "bin/uxplay.next"
+        uxplay.unlink(missing_ok=True)
+        uxplay.symlink_to(directory / "current/bin/airplay")
+        uxplay.replace(runtime / "bin/uxplay")
     (service / "run").write_text(service_script(module, runtime, release))
     (service / "run").chmod(0o700)
     print(
@@ -192,6 +254,41 @@ def service_script(module, runtime, release):
             header
             + "export GOMEMLIMIT=128MiB GOMAXPROCS=1\n"
             + 'exec "$HOME/.zombie/bin/threadfin" -config "$HOME/.zombie/threadfin" -bind 127.0.0.1 -port 34400\n'
+        )
+    if module == "airplay":
+        worker = runtime / "config/airplay-worker.json"
+        (runtime / "airplay").mkdir(exist_ok=True, mode=0o700)
+        if not worker.exists():
+            worker.write_text(
+                json.dumps(
+                    {
+                        "mode": "airplay",
+                        "listen": "127.0.0.1:8093",
+                        "token": secrets.token_hex(32),
+                        "pin": f"{secrets.randbelow(10000):04}",
+                        "stateDir": str(runtime / "airplay"),
+                    }
+                )
+                + "\n"
+            )
+            worker.chmod(0o600)
+        providers_file = runtime / "config/providers.json"
+        providers = json.loads(providers_file.read_text())
+        if "airplay" not in providers:
+            providers["airplay"] = {
+                "enabled": False,
+                "url": "http://127.0.0.1:8093",
+                "token": json.loads(worker.read_text())["token"],
+            }
+            replacement = providers_file.with_suffix(".next")
+            replacement.write_text(json.dumps(providers, indent=2) + "\n")
+            replacement.chmod(0o600)
+            replacement.replace(providers_file)
+        return (
+            header
+            + 'export PATH="$HOME/.zombie/bin:$PATH" GOMEMLIMIT=128MiB GOMAXPROCS=1\n'
+            + 'export GST_REGISTRY="$HOME/.zombie/airplay/gstreamer-registry.bin"\n'
+            + 'exec "$HOME/.zombie/modules/airplay/current/bin/zombie-worker" -config "$HOME/.zombie/config/airplay-worker.json"\n'
         )
     config = runtime / "config/mediamtx.yml"
     if not config.exists():

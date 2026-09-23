@@ -29,7 +29,14 @@ def symbols(output, undefined):
     return result
 
 
-def audit(binary, ndk, arch):
+def audit(
+    binary,
+    ndk,
+    arch,
+    external_libraries=None,
+    verify_external_closure=True,
+    allow_no_libraries=False,
+):
     spec = importlib.util.spec_from_file_location(
         "installer", Path(__file__).with_name("install-binary.py")
     )
@@ -40,16 +47,41 @@ def audit(binary, ndk, arch):
     toolchain = ndk / "toolchains/llvm/prebuilt/linux-x86_64"
     tool = toolchain / "bin/llvm-readelf"
     needed = set(re.findall(r"\(NEEDED\).*\[(.*?)\]", readelf(tool, binary, "-d")))
-    allowed = {"libc.so", "libdl.so", "libm.so", "liblog.so"}
-    if not needed or not needed.issubset(allowed):
+    system = {"libc.so", "libdl.so", "libm.so", "liblog.so"}
+    external_libraries = external_libraries or {}
+    allowed = system | set(external_libraries)
+    if (not needed and not allow_no_libraries) or not needed.issubset(allowed):
         raise ValueError(f"Unexpected runtime libraries: {sorted(needed)}")
     triple = "aarch64-linux-android" if arch == "arm64" else "arm-linux-androideabi"
     stubs = toolchain / "sysroot/usr/lib" / triple / "24"
     exports = set()
-    for library in needed:
+    system_needed = needed & system
+    for library, path in external_libraries.items():
+        if library not in needed or not path.is_file():
+            raise ValueError(f"Missing reviewed Termux library: {library}")
+        dependencies = set(
+            re.findall(r"\(NEEDED\).*\[(.*?)\]", readelf(tool, path, "-d"))
+        )
+        if verify_external_closure and not dependencies.issubset(allowed):
+            raise ValueError(
+                f"Unexpected dependency of {library}: {dependencies - allowed}"
+            )
+        system_needed.update(dependencies & system)
+        exports.update(symbols(readelf(tool, path, "--dyn-syms"), False))
+    for library in system_needed:
         exports.update(symbols(readelf(tool, stubs / library, "--dyn-syms"), False))
+    external_imports = (
+        set().union(
+            *(
+                symbols(readelf(tool, path, "--dyn-syms"), True)
+                for path in external_libraries.values()
+            )
+        )
+        if verify_external_closure
+        else set()
+    )
     imports = symbols(readelf(tool, binary, "--dyn-syms"), True)
-    missing = imports - exports
+    missing = (imports | external_imports) - exports
     if missing:
         raise ValueError(f"Imports absent from API24 libraries: {sorted(missing)}")
     loads = [
@@ -68,6 +100,7 @@ def audit(binary, ndk, arch):
         "neededLibraries": sorted(needed),
         "requiredImports": len(imports),
         "api24ImportsSatisfied": True,
+        "externalRuntimeClosureVerified": verify_external_closure,
         "minimumLoadAlignment": min(int(row[-1], 16) for row in loads),
         "runtimeVerified": False,
     }

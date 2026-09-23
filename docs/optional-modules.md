@@ -10,7 +10,7 @@ work with direct M3U/XMLTV without Threadfin.
 | MediaMTX 1.21.1 | ARMv7/ARM64 Android API24 PIE builder, sources/notices and compiler-free stopped-service installer | Android execution, RTSP/HLS/auth and thermal acceptance deferred; [public dev.38 assets](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.38) available |
 | YouTube / TV receiver | [Public dev.45](https://github.com/ZombieBox-tv/zombiebox-gateway-edge/releases/tag/v0.1.0-dev.45) portable JS modules, source archives, checksum-gated stopped-service installer and matching Core for both ABIs | Validate Bionic Node, TV Code/DIAL and receiver behavior |
 | Spotify | Existing native source installation | Android native codec dependency closure and binary bundle |
-| AirPlay / UxPlay | Experimental native source installation | Android GStreamer/OpenSSL/libplist closure and binary bundle |
+| AirPlay / UxPlay | Android ARMv7/ARM64 build recipe and compiler-free module installer | Publish matching binaries/sources; then validate Termux dependency closure, mDNS, PIN and audio/video on Android |
 | Rebrowser | Remote Full only | Local Edge browser is outside the supported baseline |
 
 ## YouTube catalog and TV receiver module candidates
@@ -30,6 +30,32 @@ remote asset hashes. Bionic behavior remains unchecked. At this release's build,
 Termux LTS is Node24.18.0; the separate TUR Node22 package is 22.22.1, below our security
 floor. A later Termux package update can change the native runtime independently
 of the frozen JS module, so doctor reports the actual version.
+
+## AirPlay binary candidate
+
+`scripts/build-airplay-module.py` builds the locked UxPlay source as an Android
+PIE with internal mDNS. Its only source patch removes `-lpthread`, because Bionic
+exports pthreads from libc. The package also carries the shared Go receiver
+worker, licenses and a matching source archive. The build downloads exact
+SHA256-pinned Termux headers/libraries from
+`packaging/airplay-termux-libs.json`; these dynamic libraries are **not** bundled
+with our module. The installer obtains their native packages through Termux,
+checks the executable and worker before stopping an existing service, preserves
+PIN/tokens and creates a stopped `zombie-airplay` service. It requires the exact
+Core commit in the installed Edge bundle.
+
+Once published in a matching release, install it with:
+
+```sh
+zombiebox module --module airplay --version RELEASE_TAG
+zombiebox start zombie-airplay
+```
+
+The host ELF audit confirms Android API24 imports, ABI, PIE/interpreter and
+16 KiB ARM64 or 4 KiB ARMv7 alignment. It checks direct Termux library imports,
+but not the complete runtime transitive closure. Native GStreamer plugins,
+receiver discovery, PIN, audio and video still require Android execution and
+physical acceptance. The module does not silently enable AirPlay in Core.
 
 ## Threadfin installation
 

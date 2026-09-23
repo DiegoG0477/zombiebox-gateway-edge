@@ -1,0 +1,118 @@
+{
+  "repository": "https://packages.termux.dev/apt/termux-main/",
+  "runtimePackages": [
+    "openssl",
+    "libplist",
+    "gstreamer",
+    "gst-plugins-base",
+    "gst-plugins-good",
+    "gst-plugins-bad",
+    "glib",
+    "libc++"
+  ],
+  "buildPackages": [
+    "openssl",
+    "libplist",
+    "gstreamer",
+    "gst-plugins-base",
+    "glib",
+    "libffi",
+    "pcre2",
+    "zlib",
+    "graphene"
+  ],
+  "aarch64": {
+    "openssl": [
+      "1:3.6.3",
+      "pool/main/o/openssl/openssl_1:3.6.3_aarch64.deb",
+      "86760e9ce736f463236f2c15b1eb3a3fdcfc5778d0fd7077a917448dcc90f3aa"
+    ],
+    "libplist": [
+      "2.7.0-1",
+      "pool/main/libp/libplist/libplist_2.7.0-1_aarch64.deb",
+      "7d261c3fb097c881a555b0aec7a50cac82dc6311f4e16698fd10080f01586842"
+    ],
+    "gstreamer": [
+      "1.28.7",
+      "pool/main/g/gstreamer/gstreamer_1.28.7_aarch64.deb",
+      "7c2ce326b3e96849b70098b2730b5d94b6e5dbf62883e9b80f59e3bc7a74fef4"
+    ],
+    "gst-plugins-base": [
+      "1.28.7",
+      "pool/main/g/gst-plugins-base/gst-plugins-base_1.28.7_aarch64.deb",
+      "e8a1737598f22ecf8b180b4843b664c2608678f692e7f93fa48fd4e19da9944e"
+    ],
+    "glib": [
+      "2.90.0",
+      "pool/main/g/glib/glib_2.90.0_aarch64.deb",
+      "fee438e69505cda78f29e6662afb04613947f56db3e8d1557f25a0a5c3ea7c9c"
+    ],
+    "libffi": [
+      "3.8.0",
+      "pool/main/libf/libffi/libffi_3.8.0_aarch64.deb",
+      "4f255badf74cd31f6a2801c17fa1444199c84c834b517b7c843e2fe9ebe91d77"
+    ],
+    "pcre2": [
+      "10.47",
+      "pool/main/p/pcre2/pcre2_10.47_aarch64.deb",
+      "51f915d22de639bfca6ec029ae613987bbe3bc73626eede13319fd2e95f50b63"
+    ],
+    "zlib": [
+      "1.3.2",
+      "pool/main/z/zlib/zlib_1.3.2_aarch64.deb",
+      "75e7d0af17fcc3b40004309fdc00a1ddb9ae08346dce5e269902c34ac3966ac9"
+    ],
+    "graphene": [
+      "1.10.8-3",
+      "pool/main/g/graphene/graphene_1.10.8-3_aarch64.deb",
+      "9b2ae32ab0a4b84f8804a6916fb4be884ccf27826e361aaffc4affbe023fc1c1"
+    ]
+  },
+  "arm": {
+    "openssl": [
+      "1:3.6.3",
+      "pool/main/o/openssl/openssl_1:3.6.3_arm.deb",
+      "9c0f9853fa3d6ee801ef76cb64d957ca6c5fed53dbc36168fbc37959db069dc3"
+    ],
+    "libplist": [
+      "2.7.0-1",
+      "pool/main/libp/libplist/libplist_2.7.0-1_arm.deb",
+      "d167691ed728245df2400d28932f2c44f1013f6a74bff310368df65a0f8a7acb"
+    ],
+    "gstreamer": [
+      "1.28.7",
+      "pool/main/g/gstreamer/gstreamer_1.28.7_arm.deb",
+      "c13c5c219bf244bf62133fda21e006af230b8e15758940e639867218fc60f70a"
+    ],
+    "gst-plugins-base": [
+      "1.28.7",
+      "pool/main/g/gst-plugins-base/gst-plugins-base_1.28.7_arm.deb",
+      "d769df1ed156ce59a908e536f744d103756fe6ac3232231ec0ad1ea3ea80ad92"
+    ],
+    "glib": [
+      "2.90.0",
+      "pool/main/g/glib/glib_2.90.0_arm.deb",
+      "2422fd72c7050e9418327e4e0f138ee3133859e068f71ce6efdb6e6040016929"
+    ],
+    "libffi": [
+      "3.8.0",
+      "pool/main/libf/libffi/libffi_3.8.0_arm.deb",
+      "27fc13bac4366ea270689a59a4a41fde52dfdbbd13418b29ac32ee66a0c43396"
+    ],
+    "pcre2": [
+      "10.47",
+      "pool/main/p/pcre2/pcre2_10.47_arm.deb",
+      "9c395a0e9929c156a7567c1d9a5d68c0861c04866f43ed79f628a50237c3490b"
+    ],
+    "zlib": [
+      "1.3.2",
+      "pool/main/z/zlib/zlib_1.3.2_arm.deb",
+      "c63ee590f2f02254725bdd8e415582c70737b63712a20d5395b45e4b13ffffc5"
+    ],
+    "graphene": [
+      "1.10.8-3",
+      "pool/main/g/graphene/graphene_1.10.8-3_arm.deb",
+      "d1610c93a8bb14b8eae5129e6cb0a0c3f7213644dd1ff42927ea3ecf07984fad"
+    ]
+  }
+}
