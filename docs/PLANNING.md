@@ -1,5 +1,12 @@
 # zombiebox-gateway-edge: component work
 
+## dev.60 Plex shared-library setup clarification
+
+The README now identifies the manual one-server URL/token connector as a
+temporary test path. Plex account linking, shared-server discovery and
+server-scoped token maintenance remain M4 work in the shared core; no new Edge
+binary or Android execution is claimed.
+
 ## dev.59 onboarding and installable release channel
 
 The Termux one-line installer reads an installable release channel, currently

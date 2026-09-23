@@ -121,7 +121,7 @@ The gateway stores these values in private SQLite, not in the APK.
 | Service | Credential or address, and where it comes from |
 | --- | --- |
 | IPTV | Your provider's HTTP(S) M3U URL; optionally its XMLTV guide URL. A public playlist needs no account token or Threadfin module. |
-| Plex | Your reachable Plex server URL and `X-Plex-Token` from [Plex's token guide](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/); its simple method can produce a temporary token. |
+| Plex | **Current manual connector:** one reachable Plex Media Server URL and an `X-Plex-Token` authorized for that server. [Plex's XML/token guide](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/) describes a temporary token suitable for a short test, not a durable account-linking setup. |
 | Jellyfin | Your server URL, an API key from **Admin Dashboard → API Keys**, and the intended user's ID from **Admin Dashboard → Users**. The gateway requires all three; see [Jellyfin user administration](https://jellyfin.org/docs/general/server/users/adding-managing-users/). ZombieBox does not supply them. |
 | Stremio | A chosen add-on endpoint/catalog, normally its [`manifest.json` URL](https://stremio.github.io/stremio-addon-guide/step1). Private add-on URLs can contain secrets. |
 | YouTube catalog / TV Code | No personal API key for anonymous browse or receiver pairing. The optional module creates its internal worker token. TV Code is not Google account sign-in. |
@@ -133,6 +133,12 @@ Start with only the services you use. Enter IPTV/Plex/Jellyfin/Stremio in
 Client **Settings → Providers** after pairing; each save asks for the same
 operator code. Server JSON entries override and lock the corresponding Client
 form. SQLite, `runtime.env` and backups contain secrets.
+
+**Plex shared libraries:** Edge currently cannot sign in to your Plex account,
+discover servers shared with it or renew their server-specific tokens. Its
+URL/token form can reach one shared server only when you already have a valid
+connection URL and token for that server. Do not enter your Plex password. The
+account-linking and server-discovery flow remains an M4 integration gap.
 
 In the **current local dev.57 Core candidate**, the installer instead creates
 `~/.zombie/config/operator.code` and preserves it across reinstalls. Read that
