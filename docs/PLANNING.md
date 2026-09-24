@@ -1,5 +1,12 @@
 # zombiebox-gateway-edge: component work
 
+## dev.62 shared AirPlay receiver PIN route
+
+Pin Core dev.55's private-worker and paired-Client AirPlay PIN route. This is a
+source dependency update only: published Edge dev.50 artifacts remain frozen,
+and native UxPlay/worker packaging plus physical iPad authentication/playback
+remain unverified. The operator code remains separate; no product gate closes.
+
 ## dev.60 Plex shared-library setup clarification
 
 The README now identifies the manual one-server URL/token connector as a
