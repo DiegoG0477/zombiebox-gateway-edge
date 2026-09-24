@@ -3,6 +3,7 @@
   "repository": "zombiebox-gateway-edge",
   "productRegistry": "workspace:docs/milestones.json",
   "notes": [
+    "Dev.61: Pins Core dev.54 YouTube stream-resolution fix in source; no Android/Bionic artifact was rebuilt and no physical Edge behavior is verified. Published dev.50 archives remain frozen.",
     "Dev.60: README clarifies that remote Plex libraries shared with the user's account need a future gateway-owned account link/discovery flow; the current connector takes one server URL/token. No binary or physical gate closes.",
     "Dev.59: Edge README identifies credential sources and stable published/local pairing-code paths. The installer resolves an installable release channel, currently dev.50, unless an immutable version is given. Host tests pass; Android/runtime and public candidate gates remain open.",
     "Dev.58: README distinguishes the published dev.50 install set from private dev.57 Core/modules and documents the current persisted operator-code file. No binary is rebuilt or published; Android execution remains open.",
@@ -71,6 +72,6 @@
       "remoteURL": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.52",
+  "developmentCheckpoint": "v0.1.0-dev.61",
   "remote": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge"
 }
