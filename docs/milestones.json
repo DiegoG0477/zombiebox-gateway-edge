@@ -3,6 +3,7 @@
   "repository": "zombiebox-gateway-edge",
   "productRegistry": "workspace:docs/milestones.json",
   "notes": [
+    "Dev.64: Pins shared Core dev.58 YouTube feed/related, quality selection and Spotify audio bridge in source only. No Edge Android/Bionic artifact was rebuilt; physical Edge playback, Spotify audio and quality switching remain unverified. Published dev.50 stays frozen.",
     "Dev.63: Pins Core dev.57 YouTube browse/resolution/range fixes and Spotify account-readiness reporting in source. No Edge Android/Bionic artifact, account, receiver playback or physical acceptance is claimed; published dev.50 remains frozen.",
     "Dev.62: Pins Core dev.55 paired AirPlay receiver PIN route in source only. Published dev.50 Edge artifacts and Android/Bionic runtime remain unchanged; physical iPad authentication/playback are open.",
     "Dev.61: Pins Core dev.54 YouTube stream-resolution fix in source; no Android/Bionic artifact was rebuilt and no physical Edge behavior is verified. Published dev.50 archives remain frozen.",
