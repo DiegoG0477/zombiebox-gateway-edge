@@ -1,5 +1,14 @@
 # zombiebox-gateway-edge: component work
 
+## dev.63 shared YouTube and Spotify readiness candidate
+
+Pin Core dev.57, which improves anonymous YouTube browse, bounded progressive
+MP4 resolution/ranges and Spotify account readiness reporting for a future Edge
+build. This is a source dependency update;
+the published Edge dev.50 Android/Bionic bundles are unchanged. No new Edge
+Android execution, Spotify account session, physical receiver playback or
+product gate is claimed.
+
 ## dev.62 shared AirPlay receiver PIN route
 
 Pin Core dev.55's private-worker and paired-Client AirPlay PIN route. This is a
