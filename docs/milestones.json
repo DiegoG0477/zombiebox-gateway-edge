@@ -3,6 +3,7 @@
   "repository": "zombiebox-gateway-edge",
   "productRegistry": "workspace:docs/milestones.json",
   "notes": [
+    "Dev.69: Pins shared Core dev.65 adaptive playback, YouTube quality and AirPlay AAC candidate without rebuilding Android/Bionic artifacts or claiming native runtime/audio acceptance. Existing published module identities remain frozen. No product milestone closes.",
     "Dev.68: Pins Core dev.62 receiver HLS capability fallback and Spotify refusal diagnostics in source only. No Android/Bionic artifact was rebuilt or physically verified; published dev.50 remains frozen. No product milestone closes.",
     "Dev.67: Pins Core dev.61 capability-aware HLS and receiver/playlist updates in source only. Android/Bionic artifact and physical playback remain unverified; published dev.50 stays frozen. No product milestone closes.",
     "Dev.66: Pins Core dev.60 playback evidence, YouTube-related retry semantics and Spotify stream diagnostics in source only. No Edge Android/Bionic artifact or physical playback acceptance is claimed; published dev.50 stays frozen.",
@@ -79,6 +80,6 @@
       "remoteURL": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge/milestone/2"
     }
   ],
-  "developmentCheckpoint": "v0.1.0-dev.68",
+  "developmentCheckpoint": "v0.1.0-dev.69",
   "remote": "https://github.com/ZombieBox-tv/zombiebox-gateway-edge"
 }

@@ -1,4 +1,12 @@
 # zombiebox-gateway-edge: component work
+
+## dev.69 shared adaptive playback pin
+
+Pin Core dev.65 for validated media renditions, AirPlay AAC fallback and
+capability-driven Cast policy without forking the Go implementation. Existing
+Android/Bionic binaries and optional modules are unchanged. Native runtime,
+audio and product acceptance remain open.
+
 ## dev.67 shared capability-aware media candidate
 
 Pin Core dev.61 in source for capability-aware HLS and receiver
