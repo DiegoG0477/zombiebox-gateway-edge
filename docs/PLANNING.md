@@ -1,4 +1,10 @@
 # zombiebox-gateway-edge: component work
+## dev.67 shared capability-aware media candidate
+
+Pin Core dev.61 in source for capability-aware HLS and receiver
+updates. No Edge Android/Bionic bundle is rebuilt or physically accepted;
+published dev.50 stays unchanged and no product milestone closes.
+
 
 ## dev.63 shared YouTube and Spotify readiness candidate
 
