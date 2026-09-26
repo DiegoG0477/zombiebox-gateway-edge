@@ -22,7 +22,7 @@ for name in "$@"; do
     case "$name" in
         spotify)
             source_name=go-librespot
-            commit=57d7278d94a9233060c2a6238f5926ffd1e72de4
+            commit=6a3e25019de8d2893b3fa26b0273d8cc376241c5
             command -v pkg-config >/dev/null
             pkg-config --exists flac libmpg123 || {
                 echo 'Install native libogg, libflac, mpg123 and pkg-config development files.' >&2

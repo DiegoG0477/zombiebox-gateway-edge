@@ -251,6 +251,7 @@ class ModuleTests(unittest.TestCase):
             upstreamCommit=modules.MODULES["spotify"],
             coreCommit="c" * 40,
             vorbisPatch="licensed-vorbis.patch",
+            sourcePatches=["licensed-vorbis.patch", "stop-key-refusal-skip.patch"],
             externalPackages=list(modules.SPOTIFY_PACKAGE_VERSIONS),
             externalPackageVersions=modules.SPOTIFY_PACKAGE_VERSIONS,
             dependencies=[
@@ -280,9 +281,18 @@ class ModuleTests(unittest.TestCase):
             {"module": "github.com/xlab/vorbis-go", "version": "unlicensed"}
         )
         self.save()
-        with self.assertRaisesRegex(ValueError, "reviewed decoder"):
+        with self.assertRaisesRegex(ValueError, "reviewed source and decoder build"):
             modules.validate(self.package, "spotify", "arm64", 24)
         self.record["dependencies"].pop()
+        self.save()
+        self.record["sourcePatches"] = ["licensed-vorbis.patch"]
+        self.save()
+        with self.assertRaisesRegex(ValueError, "reviewed source and decoder build"):
+            modules.validate(self.package, "spotify", "arm64", 24)
+        self.record["sourcePatches"] = [
+            "licensed-vorbis.patch",
+            "stop-key-refusal-skip.patch",
+        ]
         self.save()
         (runtime / "current/release.json").write_text(
             json.dumps({"coreCommit": "c" * 40})

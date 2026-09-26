@@ -76,6 +76,20 @@ It creates a stopped service and does not enable the provider automatically.
 Account playback, A/V routing, CPU/memory and thermal behavior still require
 Android execution; a host cross-build does not prove them.
 
+## Spotify source-only candidate
+
+The current source builder and native source installer pin go-librespot v0.10.2
+at commit `6a3e25019de8d2893b3fa26b0273d8cc376241c5` and Core commit
+`eca448b1c2b97e7e72478656b0749173f11df841`. Source preparation records and
+packages both `licensed-vorbis.patch` and `stop-key-refusal-skip.patch`; the
+module manifest requires that exact patch set. The second patch contains AES key
+refusals as failed/stopped playback instead of automatically skipping, while
+keeping bounded skip behavior for restricted tracks or unsupported formats.
+This candidate has no rebuilt Edge binaries and is not part of published dev.50,
+whose modules and sources remain frozen. Spotify-side account or AES entitlement
+refusals are not fixed by this source update. Android/Bionic playback and
+performance remain unverified.
+
 ## Threadfin installation
 
 With a dev.37-or-newer core launcher, select the matching published checkpoint:

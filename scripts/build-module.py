@@ -22,8 +22,9 @@ ROOT = Path(__file__).resolve().parents[1]
 MODULES = {
     "mediamtx": ("048255986f7e04b859b4c4efe651448ec785ecd4", "1.21.1"),
     "threadfin": ("6b9c0ccf16164eb362af0a44660228267734c5aa", "1.2.40"),
-    "spotify": ("57d7278d94a9233060c2a6238f5926ffd1e72de4", "patched-0.1.0"),
+    "spotify": ("6a3e25019de8d2893b3fa26b0273d8cc376241c5", "0.10.2"),
 }
+SPOTIFY_PATCHES = ("licensed-vorbis.patch", "stop-key-refusal-skip.patch")
 
 
 def archive(folder, output):
@@ -194,6 +195,9 @@ def build(args, core):
                 ],
                 check=True,
             )
+            applied_patches = (source / "ZOMBIE_PATCHES").read_text().splitlines()
+            if applied_patches != list(SPOTIFY_PATCHES):
+                raise ValueError("Spotify source does not have the reviewed patch set")
             sysroot = root / "sysroot"
             prefix = termux_spotify_libraries(args.arch, sysroot)
             env.update(
@@ -327,10 +331,11 @@ def build(args, core):
                     stdout=output,
                     check=True,
                 )
-            shutil.copy2(
-                core / "wrappers/spotify/patches/licensed-vorbis.patch",
-                sources / "licensed-vorbis.patch",
-            )
+            for patch_name in SPOTIFY_PATCHES:
+                shutil.copy2(
+                    core / "wrappers/spotify/patches" / patch_name,
+                    sources / patch_name,
+                )
             shutil.copy2(
                 core / "scripts/prepare-spotify-source.py",
                 sources / "prepare-spotify-source.py",
@@ -368,6 +373,7 @@ def build(args, core):
                     name: entry[0] for name, entry in spotify_lock[package_arch].items()
                 },
                 vorbisPatch="licensed-vorbis.patch",
+                sourcePatches=list(SPOTIFY_PATCHES),
             )
         (sources / "sources.json").write_text(json.dumps(record, indent=2) + "\n")
         shutil.copy2(Path(__file__), sources / "build-module.py")
@@ -395,7 +401,7 @@ def build(args, core):
         (sources / "sources.json").write_text(json.dumps(record, indent=2) + "\n")
         if args.module == "spotify":
             (sources / "BUILDING.md").write_text(
-                "Extract upstream-patched.tar.gz. With Go1.25.6, NDK28.2.13676358 API24 Clang and the exact SHA-locked Termux libflac/libmpg123/libogg headers and libraries in spotify-termux-libs.json, build ./cmd/daemon with GOOS=android, GOARCH=arm64 or arm GOARM=7, CGO_ENABLED=1, -buildmode=pie, -trimpath and -ldflags='-s -w -checklinkname=0'. Set PKG_CONFIG_LIBDIR to the extracted package lib/pkgconfig directory and PKG_CONFIG_SYSROOT_DIR to its extraction root. Build ./cmd/zombie-worker from gateway-core.tar with the same Go/NDK target. The matching module ZIPs, notices, patch and Go standard-library source are included. Do not substitute xlab/vorbis-go. No signing key is needed.\n"
+                "Extract upstream-patched.tar.gz. With Go1.25.6, NDK28.2.13676358 API24 Clang and the exact SHA-locked Termux libflac/libmpg123/libogg headers and libraries in spotify-termux-libs.json, build ./cmd/daemon with GOOS=android, GOARCH=arm64 or arm GOARM=7, CGO_ENABLED=1, -buildmode=pie, -trimpath and -ldflags='-s -w -checklinkname=0'. Set PKG_CONFIG_LIBDIR to the extracted package lib/pkgconfig directory and PKG_CONFIG_SYSROOT_DIR to its extraction root. Build ./cmd/zombie-worker from gateway-core.tar with the same Go/NDK target. The matching module ZIPs, notices, both source patches and Go standard-library source are included. Do not substitute xlab/vorbis-go. No signing key is needed.\n"
             )
         else:
             (sources / "BUILDING.md").write_text(

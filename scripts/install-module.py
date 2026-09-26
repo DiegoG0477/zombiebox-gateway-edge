@@ -20,7 +20,7 @@ MODULES = {
     "threadfin": "6b9c0ccf16164eb362af0a44660228267734c5aa",
     "mediamtx": "048255986f7e04b859b4c4efe651448ec785ecd4",
     "airplay": "57ea83411d5f7e0b38c5841987439340543f025c",
-    "spotify": "57d7278d94a9233060c2a6238f5926ffd1e72de4",
+    "spotify": "6a3e25019de8d2893b3fa26b0273d8cc376241c5",
 }
 SPOTIFY_PACKAGE_VERSIONS = {
     "libflac": "1.5.0-1",
@@ -146,13 +146,17 @@ def validate(package, module, arch, api):
         }
         if (
             record.get("vorbisPatch") != "licensed-vorbis.patch"
+            or record.get("sourcePatches")
+            != ["licensed-vorbis.patch", "stop-key-refusal-skip.patch"]
             or record.get("externalPackages") != list(SPOTIFY_PACKAGE_VERSIONS)
             or record.get("externalPackageVersions") != SPOTIFY_PACKAGE_VERSIONS
             or modules.get("github.com/jfreymuth/oggvorbis") != "v1.0.5"
             or modules.get("github.com/jfreymuth/vorbis") != "v1.0.2"
             or "github.com/xlab/vorbis-go" in modules
         ):
-            raise ValueError("Spotify package is not the reviewed decoder build")
+            raise ValueError(
+                "Spotify package is not the reviewed source and decoder build"
+            )
     if not required.issubset(files) or actual != set(files):
         raise ValueError("Incomplete or unexpected module files")
     for name, checksum in files.items():
