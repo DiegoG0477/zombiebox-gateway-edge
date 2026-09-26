@@ -80,6 +80,16 @@ def build(core, ndk, output, version, arch):
         shutil.copy2(
             core / "docs/licenses/DIAL-LICENSE", package / "licenses/DIAL-LICENSE"
         )
+        for name in (
+            "miekg-dns-LICENSE",
+            "golang-x-net-LICENSE",
+            "golang-x-sys-LICENSE",
+        ):
+            shutil.copy2(core / "docs/licenses" / name, package / "licenses" / name)
+        shutil.copy2(
+            core / "third_party/THIRD_PARTY_NOTICES.md",
+            package / "THIRD_PARTY_NOTICES.md",
+        )
         # The bundled SQLite driver is compiled into this executable.
         go_cache = Path(
             subprocess.check_output(
